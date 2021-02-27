@@ -1,4 +1,5 @@
 # sirawit-pos
+![](preview/page1.png)
 
 ## Build Setup
 
