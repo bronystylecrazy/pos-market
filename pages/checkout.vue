@@ -1,7 +1,15 @@
 <template>
-  <div class="checkout">
-    <VTable />
-  </div>
+  <v-layout row>
+    <v-flex md8>
+      <VLFilter />
+      <VLTable />
+    </v-flex>
+    <v-flex md4 class="pl-2">
+      <VRFilter />
+      <VRProfile />
+      <VRTable />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -9,10 +17,14 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
   components: {
-    VTable: () => import("~/components/checkout/VTable"),
+    VLTable: () => import("~/components/checkout/LeftSide/VTable"),
+    VLFilter: () => import("~/components/checkout/LeftSide/VFilter"),
+    VRFilter: () => import("~/components/checkout/RightSide/VFilter"),
+    VRProfile: () => import("~/components/checkout/RightSide/VProfile"),
+    VRTable: () => import("~/components/checkout/RightSide/VTable"),
   },
   computed: {
-    ...mapFields(["products", "header"]),
+    ...mapFields(["products", "header", "carts"]),
   },
   created() {
     this.header = "Checkout";

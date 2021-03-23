@@ -9,16 +9,18 @@
     <v-list>
       <v-list-item class="px-2">
         <v-list-item-avatar>
-          <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+          <v-img
+            :src="`https://avatars.dicebear.com/api/avataaars/${profile.displayName}.svg`"
+          ></v-img>
         </v-list-item-avatar>
       </v-list-item>
 
       <v-list-item link>
         <v-list-item-content>
           <v-list-item-title class="title">
-            Sirawit Pratoomsuwan
+            {{ profile.displayName }}
           </v-list-item-title>
-          <v-list-item-subtitle>s36526@bj.ac.th</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ profile.email }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -36,13 +38,17 @@
         <v-list-item-icon
           ><v-icon>{{ menu.icon }}</v-icon></v-list-item-icon
         >
-        <v-list-item-title>{{ menu.title }}</v-list-item-title>
+        <v-list-item-title class="font-weight-bold">{{
+          menu.title
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
+import { mapFields } from "vuex-map-fields";
+
 export default {
   data() {
     return {
@@ -61,6 +67,9 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    ...mapFields(["profile"]),
   },
 };
 </script>

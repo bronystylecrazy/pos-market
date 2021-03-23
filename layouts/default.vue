@@ -3,7 +3,7 @@
     <VNavbar />
     <VAppbar />
     <v-main>
-      <v-container>
+      <v-container fluid class="px-4">
         <Nuxt />
       </v-container>
     </v-main>
