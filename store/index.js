@@ -1,20 +1,28 @@
-export const state = () => ({
-    carts: []
-})
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-export const getters = {
-    carts: state => state.carts
-}
+// Import the `getField` getter and the `updateField`
+// mutation function from the `vuex-map-fields` module.
+import {
+  getField,
+  updateField
+} from 'vuex-map-fields';
 
-export const mutations = {
-    ADD_TO_CART: (state, product) => {
-        state.carts.push(product);
-    }
-}
+Vue.use(Vuex);
 
-export const actions = {
-    addToCart({ commit }, product) {
-        console.log('add to cart');
-        commit('ADD_TO_CART', product);
-    }
-}
+export default new Vuex.Store({
+  state: {
+    fieldA: 'Hello World',
+    fieldB: '',
+  },
+  getters: {
+    // Add the `getField` getter to the
+    // `getters` of your Vuex store instance.
+    getField,
+  },
+  mutations: {
+    // Add the `updateField` mutation to the
+    // `mutations` of your Vuex store instance.
+    updateField,
+  },
+});

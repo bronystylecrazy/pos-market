@@ -1,16 +1,32 @@
 <template>
-  <div>
+  <v-app>
     <VNavbar />
-    <Nuxt />
-  </div>
+    <VAppbar />
+    <v-main>
+      <v-container>
+        <Nuxt />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import VNavbar from "~/components/VNavbar.vue";
-
 export default {
   components: {
-    VNavbar,
+    VNavbar: () => import("~/components/VNavbar"),
+    VAppbar: () => import("~/components/VAppbar"),
+  },
+  data() {
+    return {};
+  },
+  created() {
+    this.$vuetify.theme.dark = false;
   },
 };
 </script>
+
+<style>
+.theme--light.v-application {
+  background: #f4f6f9;
+}
+</style>

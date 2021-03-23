@@ -1,5 +1,5 @@
 {
-  "name": "sirawit-pos",
+  "name": "pos-market",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,12 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.5",
-    "core-js": "^3.8.3",
-    "nuxt": "^2.14.12",
-    "vuesax": "^4.0.1-alpha.25"
+    "@nuxtjs/axios": "^5.13.1",
+    "core-js": "^3.9.1",
+    "nuxt": "^2.15.3",
+    "vuex-map-fields": "^1.4.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.11.3"
+  }
 }
