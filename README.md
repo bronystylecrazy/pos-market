@@ -1,20 +1,31 @@
-# pos-market
+# ⛺ pos-market (fake data)
+---
+![](work-logs/preview2.jpg)
 
-## Build Setup
+**✨ live demo (on progress😃)**
 
-```bash
-# install dependencies
-$ yarn install
+**Check this out!** -> https://pos-sirawit.netlify.app/checkout
 
-# serve with hot reload at localhost:3000
-$ yarn dev
+---
+✔️ **Check lists**
 
-# build for production and launch server
-$ yarn build
-$ yarn start
+*Frontend*
+- [ ] ( monitoring total sale,
+  products, customers,
+  lastest customer history)
+- [ ] Report (sales summary, customer summary)
+- [ ] Quick keys and product lookup 
+  (quickly search, filter, and add products)
+- [x] Payment page (permission ADMIN)
 
-# generate static project
-$ yarn generate
-```
+*Backend(with realtime database if possible)*
+- [ ] Login & Register, Logout
+- [ ] User Accounts and permissions.
+- [ ] Customer perchase history
+- [ ] Customer management
+ Insert,Fetch,Update, and Delete Customer.
+- [ ] Product management
+ Insert,Fetch,Update, and Delete Product.
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+ ---
+ Made with ❤️ by Sirawit Pratoomsuwan
