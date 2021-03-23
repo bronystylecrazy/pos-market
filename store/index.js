@@ -1,5 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import {
+  products
+} from './products';
 
 // Import the `getField` getter and the `updateField`
 // mutation function from the `vuex-map-fields` module.
@@ -10,10 +13,12 @@ import {
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+
+const createStore = () => new Vuex.Store({
   state: {
-    fieldA: 'Hello World',
-    fieldB: '',
+    products,
+    carts: [],
+    header: "Home"
   },
   getters: {
     // Add the `getField` getter to the
@@ -26,3 +31,5 @@ export default new Vuex.Store({
     updateField,
   },
 });
+
+export default createStore;

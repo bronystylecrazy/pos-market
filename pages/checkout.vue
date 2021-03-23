@@ -1,6 +1,5 @@
 <template>
   <div class="checkout">
-    {{ fieldA }}
     <VTable />
   </div>
 </template>
@@ -10,10 +9,13 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
   components: {
-    VTable: () => import("~/components/VTable"),
+    VTable: () => import("~/components/checkout/VTable"),
   },
   computed: {
-    ...mapFields(["fieldA", "fieldB"]),
+    ...mapFields(["products", "header"]),
+  },
+  created() {
+    this.header = "Checkout";
   },
 };
 </script>

@@ -1,46 +1,69 @@
 <template>
-  <div class="center">
-    <vs-table style="color: white; width: 100%">
-      <template #thead>
-        <vs-tr>
-          <vs-th> Product name </vs-th>
-          <vs-th> Price </vs-th>
-          <vs-th> Id </vs-th>
-        </vs-tr>
-      </template>
-      <template #tbody>
-        <vs-tr
-          :key="i"
-          v-for="(tr, i) in items"
-          :data="tr"
-          :danger="tr.id == 3"
-          :success="tr.id == 5"
-          :primary="tr.id == 8"
-          :warn="tr.id == 9"
-        >
-          <vs-td>
-            {{ tr.title }}
-          </vs-td>
-          <vs-td>
-            {{ tr.price }}
-          </vs-td>
-          <vs-td>
-            {{ tr.id }}
-          </vs-td>
-        </vs-tr>
-      </template>
-    </vs-table>
-  </div>
+  <v-simple-table style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)">
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="text-left">Name</th>
+          <th class="text-left">Calories</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in desserts" :key="item.name">
+          <td>{{ item.name }}</td>
+          <td>{{ item.calories }}</td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
 </template>
-
 
 <script>
 export default {
-  data: () => ({}),
-  props: {
-    items: Array,
+  data() {
+    return {
+      desserts: [
+        {
+          name: "Frozen Yogurt",
+          calories: 159,
+        },
+        {
+          name: "Ice cream sandwich",
+          calories: 237,
+        },
+        {
+          name: "Eclair",
+          calories: 262,
+        },
+        {
+          name: "Cupcake",
+          calories: 305,
+        },
+        {
+          name: "Gingerbread",
+          calories: 356,
+        },
+        {
+          name: "Jelly bean",
+          calories: 375,
+        },
+        {
+          name: "Lollipop",
+          calories: 392,
+        },
+        {
+          name: "Honeycomb",
+          calories: 408,
+        },
+        {
+          name: "Donut",
+          calories: 452,
+        },
+        {
+          name: "KitKat",
+          calories: 518,
+        },
+      ],
+    };
   },
 };
 </script>
-
-        
