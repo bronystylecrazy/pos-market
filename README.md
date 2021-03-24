@@ -14,7 +14,7 @@
   products, customers,
   lastest customer history)
 - [ ] Report (sales summary, customer summary)
-- [ ] Quick keys and product lookup 
+- [x] Quick keys and product lookup 
   (quickly search, filter, and add products)
 - [x] Payment page (permission ADMIN)
 
