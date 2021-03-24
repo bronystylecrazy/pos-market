@@ -6,12 +6,26 @@
     sort-by="calories"
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
     show-select
+    :search="search"
   >
     <template #item.id="{ item }">
       <b>{{ item.id }}</b>
     </template>
     <template #item.price="{ item }">
       <b>{{ item.price }}$</b>
+    </template>
+    <template #item.category="{ item }">
+      <v-chip
+        class="ma-2"
+        v-for="c in item.category.trim().split(' ')"
+        :color="checkout.categoryColours[c] || $randomColor()"
+        label
+        text-color="white"
+        :key="c + item.title"
+      >
+        <v-icon left> mdi-label </v-icon>
+        {{ c }}
+      </v-chip>
     </template>
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
@@ -22,16 +36,38 @@
     </template>
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Product</v-toolbar-title>
+        <v-toolbar-title
+          >Manage {{ checkout.categories[tab - 1] || "All" }}</v-toolbar-title
+        >
         <v-divider class="mx-4" inset vertical></v-divider>
+
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dark class="mb-2 ml-4" v-bind="attrs" v-on="on">
-              Select All
-            </v-btn>
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn
+              color="primary"
+              dark
+              class="mb-2 ml-4"
+              v-bind="attrs"
+              v-on="on"
+            >
               New Product
+            </v-btn>
+            <v-btn
+              dark
+              class="mb-2 ml-4"
+              v-bind="attrs"
+              @click="deleteSelected"
+              :disabled="!selected[0]"
+            >
+              DELETE SELECTED
             </v-btn>
           </template>
           <v-card>
@@ -114,13 +150,13 @@
 
 <script>
 import { mapFields } from "vuex-map-fields";
-
 export default {
   props: {
     tab: Number,
   },
   data: () => ({
     selected: [],
+    search: "",
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -199,7 +235,7 @@ export default {
 
   methods: {
     initialize() {},
-
+    deleteSelected() {},
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);

@@ -11,6 +11,7 @@ import {
   updateField
 } from 'vuex-map-fields';
 import _ from "lodash";
+import randomColor from "randomcolor";
 
 Vue.use(Vuex);
 
@@ -19,6 +20,9 @@ sortBy.unshift("None");
 
 const categories = _.sortedUniq(products.map(e => e.category));
 const category = categories.filter((value, index, self) => self.indexOf(value) === index);
+const categoryColours = _.zipObject(categories, categories.map(_ => randomColor({
+  luminosity: 'dark',
+})));
 
 const createStore = () => new Vuex.Store({
   state: {
@@ -30,6 +34,7 @@ const createStore = () => new Vuex.Store({
       sort: "None",
       sortBy,
       categories,
+      categoryColours,
       category,
       payment: {
         customer: "",
