@@ -3,7 +3,7 @@
     :headers="headers"
     :items="filteredProducts"
     sort-by="calories"
-    class="elevation-1"
+    style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
   >
     <template #item.id="{ item }">
       <b>{{ item.id }}</b>
@@ -174,9 +174,11 @@ export default {
     },
     ...mapFields(["products", "header", "checkout"]),
     filteredProducts() {
-      return this.products.filter(
-        (product) => product.category === this.checkout.categories[this.tab]
-      );
+      return this.tab !== 0
+        ? this.products.filter(
+            (product) => product.category === this.checkout.categories[this.tab]
+          )
+        : this.products;
     },
   },
 
