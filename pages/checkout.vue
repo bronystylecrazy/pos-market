@@ -27,7 +27,7 @@ export default {
     VMethod: () => import("~/components/checkout/RightSide/VMethod"),
   },
   computed: {
-    ...mapFields(["products", "header", "carts"]),
+    ...mapFields(["products", "header", "carts", "checkout.categories"]),
   },
   created() {
     this.header = "Checkout";

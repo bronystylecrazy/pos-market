@@ -1,5 +1,9 @@
 <template>
-  <div class="index">Hello</div>
+  <v-layout row justify-center>
+    <v-flex sm12 md8>
+      <GrossSale />
+    </v-flex>
+  </v-layout>
 </template>
 
 
@@ -8,7 +12,9 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
   transition: "slide-bottom",
-  components: {},
+  components: {
+    GrossSale: () => import("~/components/dashboard/GrossSale"),
+  },
   computed: {
     ...mapFields(["products", "header"]),
   },
