@@ -2,8 +2,10 @@
   <v-data-table
     :headers="headers"
     :items="filteredProducts"
+    v-model="selected"
     sort-by="calories"
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
+    show-select
   >
     <template #item.id="{ item }">
       <b>{{ item.id }}</b>
@@ -118,6 +120,7 @@ export default {
     tab: Number,
   },
   data: () => ({
+    selected: [],
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -176,7 +179,8 @@ export default {
     filteredProducts() {
       return this.tab !== 0
         ? this.products.filter(
-            (product) => product.category === this.checkout.categories[this.tab]
+            (product) =>
+              product.category === this.checkout.categories[this.tab - 1]
           )
         : this.products;
     },

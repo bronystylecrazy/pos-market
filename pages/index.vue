@@ -7,6 +7,7 @@
 import { mapFields } from "vuex-map-fields";
 
 export default {
+  transition: "slide-bottom",
   components: {},
   computed: {
     ...mapFields(["products", "header"]),

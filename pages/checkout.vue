@@ -17,6 +17,7 @@
 import { mapFields } from "vuex-map-fields";
 
 export default {
+  transition: "slide-bottom",
   components: {
     VLTable: () => import("~/components/checkout/LeftSide/VTable"),
     VLFilter: () => import("~/components/checkout/LeftSide/VFilter"),
