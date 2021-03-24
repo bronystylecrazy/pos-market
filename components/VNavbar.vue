@@ -62,8 +62,14 @@ export default {
         {
           title: "Checkout",
           icon: "mdi-cash-register",
-          to: "checkout",
+          to: "/checkout",
           color: "green",
+        },
+        {
+          title: "Manage Product",
+          icon: "mdi-cube",
+          to: "/product",
+          color: "orange",
         },
       ],
     };

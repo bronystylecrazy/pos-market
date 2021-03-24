@@ -8,6 +8,7 @@
       <VRFilter />
       <VRProfile />
       <VRTable />
+      <VMethod />
     </v-flex>
   </v-layout>
 </template>
@@ -22,6 +23,7 @@ export default {
     VRFilter: () => import("~/components/checkout/RightSide/VFilter"),
     VRProfile: () => import("~/components/checkout/RightSide/VProfile"),
     VRTable: () => import("~/components/checkout/RightSide/VTable"),
+    VMethod: () => import("~/components/checkout/RightSide/VMethod"),
   },
   computed: {
     ...mapFields(["products", "header", "carts"]),

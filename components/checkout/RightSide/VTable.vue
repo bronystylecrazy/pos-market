@@ -8,6 +8,7 @@
           <th class="text-left">Name</th>
           <th class="text-left">Quantity</th>
           <th class="text-left">Price</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +36,7 @@
             ></v-text-field>
           </td>
           <td class="text-center font-weight-bold">
-            {{ product.quantity * product.price }}$
+            {{ (product.quantity * product.price).toFixed(2) }}$
             <!-- <b style="font-size: 10px"
               >({{ product.quantity }} x {{ product.price }})</b
             > -->
