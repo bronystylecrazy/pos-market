@@ -17,14 +17,13 @@
     <template #item.category="{ item }">
       <v-chip
         class="ma-2"
-        v-for="c in item.category.trim().split(' ')"
-        :color="checkout.categoryColours[c] || $randomColor()"
+        :color="checkout.categoryColours[item.category] || $randomColor()"
         label
         text-color="white"
-        :key="c + item.title"
+        :key="item.category + item.title"
       >
         <v-icon left> mdi-label </v-icon>
-        {{ c }}
+        {{ _.capitalize(item.category) }}
       </v-chip>
     </template>
     <template #item.image="{ item }" style="width: 20%">
@@ -78,35 +77,61 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
+                      v-model="editedItem.title"
+                      label="Name"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
+                      v-model.number="editedItem.price"
+                      label="Price"
+                      type="number"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
+                      v-model="editedItem.category"
+                      label="Category"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-list class="mb-2 elevation-2" rounded>
+                      <v-list-item>
+                        <v-list-item-avatar color="primary">
+                          <v-img
+                            :src="`https://avatars.dicebear.com/api/jdenticon/${editedItem.image}.svg`"
+                          ></v-img>
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-text-field
+                            v-model="editedItem.image"
+                            placeholder="https://avatars.dicebear.com/api/jdenticon/productname.svg"
+                            label="Image"
+                          ></v-text-field>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-btn icon>
+                            <v-icon
+                              color="grey lighten-1"
+                              @click="
+                                checkout.customerProfile.show = !checkout
+                                  .customerProfile.show
+                              "
+                              >mdi-information</v-icon
+                            >
+                          </v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-list>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-textarea
+                      v-model="editedItem.description"
+                      label="Description"
+                    ></v-textarea>
                   </v-col>
                 </v-row>
               </v-container>
@@ -142,9 +167,9 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
-    <template v-slot:no-data>
+    <!-- <template v-slot:no-data>
       <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>
+    </template> -->
   </v-data-table>
 </template>
 
@@ -193,18 +218,18 @@ export default {
     desserts: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      title: "",
+      price: 0.0,
+      description: "",
+      category: "",
+      image: "",
     },
     defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      title: "",
+      price: 0.0,
+      description: "",
+      category: "",
+      image: "",
     },
   }),
   computed: {
@@ -235,21 +260,25 @@ export default {
 
   methods: {
     initialize() {},
-    deleteSelected() {},
+    deleteSelected() {
+      for (var s of this.selected) {
+        this.products.splice(this.products.indexOf(s), 1);
+      }
+    },
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.products.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -268,12 +297,20 @@ export default {
         this.editedIndex = -1;
       });
     },
-
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        Object.assign(this.products[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem);
+        const data = {
+          ...this.editedItem,
+          id:
+            Number.parseInt(this.products[this.products.length - 1].id || 0) +
+            1,
+        };
+        this.products.push(data);
+
+        if (!this.checkout.categories.includes(data.category))
+          this.checkout.categories.push(data.category);
       }
       this.close();
     },

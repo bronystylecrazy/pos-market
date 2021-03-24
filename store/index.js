@@ -21,7 +21,8 @@ sortBy.unshift("None");
 const categories = _.sortedUniq(products.map(e => e.category));
 const category = categories.filter((value, index, self) => self.indexOf(value) === index);
 const categoryColours = _.zipObject(categories, categories.map(_ => randomColor({
-  luminosity: 'dark',
+  hue: 'random',
+  luminosity: 'random'
 })));
 
 const createStore = () => new Vuex.Store({
