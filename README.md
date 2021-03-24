@@ -21,7 +21,7 @@
 *Backend(with realtime database if possible)*
 - [ ] Login & Register, Logout
 - [ ] User Accounts and permissions.
-- [ ] Customer perchase history
+- [ ] Customer purchase history
 - [ ] Customer management
  Insert,Fetch,Update, and Delete Customer.
 - [ ] Product management
