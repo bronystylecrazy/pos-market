@@ -43,6 +43,7 @@ export default {
   plugins: [
     "~/plugins/vue-randomcolor.js",
     "~/plugins/vue-lodash.js",
+    "~/plugins/vue-particles.js",
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

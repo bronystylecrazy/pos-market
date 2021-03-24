@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <VNavbar />
-    <VAppbar />
+    <VNavbar style="z-index: 6000" />
+    <VAppbar style="z-index: 5000" />
     <v-main>
       <v-container fluid class="px-4">
         <Nuxt />

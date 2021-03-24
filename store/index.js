@@ -44,7 +44,7 @@ const createStore = () => new Vuex.Store({
       customerProfile: {
         displayName: "Fake Customer 001",
         customerID: "63130500227",
-        show: false,
+        show: true,
         store: 0,
         visit: 0,
         reward: 0
