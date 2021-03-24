@@ -1,6 +1,6 @@
 # ⛺ pos-market (fake data)
 ---
-![](work-logs/preview2.jpg)
+![](work-logs/preview3.jpg)
 
 **✨ live demo (on progress😃)**
 
@@ -17,6 +17,7 @@
 - [x] Quick keys and product lookup 
   (quickly search, filter, and add products)
 - [x] Payment page (permission ADMIN)
+- [ ] Login, Register, and Logout pages
 
 *Backend(with realtime database if possible)*
 - [ ] Login & Register, Logout
