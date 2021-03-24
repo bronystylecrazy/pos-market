@@ -4,16 +4,16 @@
 
 **✨ live demo (on progress😃)**
 
-**Check this out!** -> https://pos-sirawit.netlify.app/checkout
+**Check this out!** -> https://pos-sirawit.netlify.app
 
 ---
 ✔️ **Check lists**
 
 *Frontend*
-- [ ] ( monitoring total sale,
+- [x] ( monitoring total sale,
   products, customers,
   lastest customer history)
-- [ ] Report (sales summary, customer summary)
+- [x] Report (sales summary, customer summary)
 - [x] Quick keys and product lookup 
   (quickly search, filter, and add products)
 - [x] Payment page (permission ADMIN)

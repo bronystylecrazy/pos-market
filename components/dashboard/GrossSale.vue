@@ -1,6 +1,6 @@
 <template>
-  <v-card elevation="0" class="cshadow text-center">
-    <v-card-title>✨ Today</v-card-title>
+  <v-card elevation="0" class="cshadow">
+    <v-card-title class="font-weight-bold">✨ Today</v-card-title>
     <h3 class="text-center pt-4">Totals</h3>
     <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
       $ 254,360,451
