@@ -10,7 +10,7 @@
       <v-list-item class="px-2">
         <v-list-item-avatar>
           <v-img
-            :src="`https://avatars.dicebear.com/api/avataaars/${profile.displayName}.svg`"
+            :src="`https://i.pravatar.cc/150?u=${profile.displayName}`"
           ></v-img>
         </v-list-item-avatar>
       </v-list-item>
