@@ -10,12 +10,14 @@ import {
   getField,
   updateField
 } from 'vuex-map-fields';
+import _ from "lodash";
 
 Vue.use(Vuex);
 
 const sortBy = Object.keys(products[0] || {});
 sortBy.unshift("None");
-const categories = products.map(e => e.category);
+
+const categories = _.sortedUniq(products.map(e => e.category));
 const category = categories.filter((value, index, self) => self.indexOf(value) === index);
 
 const createStore = () => new Vuex.Store({
