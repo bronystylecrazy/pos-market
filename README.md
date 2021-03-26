@@ -2,7 +2,7 @@
 ---
 ![](work-logs/preview3.jpg)
 
-**✨ live demo (on progress😃)**
+**✨ live demo (in progress😃)**
 
 **Check this out!** -> https://pos-sirawit.netlify.app
 
@@ -29,4 +29,6 @@
  Insert,Fetch,Update, and Delete Product.
 
  ---
+ *Pictures
+ ![](work-logs/login.jpg)
  Made with ❤️ by Sirawit Pratoomsuwan
