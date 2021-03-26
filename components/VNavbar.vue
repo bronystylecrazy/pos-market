@@ -18,9 +18,9 @@
       <v-list-item link>
         <v-list-item-content>
           <v-list-item-title class="title">
-            {{ auth.user.fistName }} {{ auth.user.lastName }}
+            {{ auth.user.displayName }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ auth.user.email }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ auth.user.role }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -43,12 +43,18 @@
         }}</v-list-item-title>
       </v-list-item>
     </v-list>
+
+    <template v-slot:append>
+      <div class="pa-2">
+        <v-btn block color="red" dark @click="logout"> Logout </v-btn>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { mapFields } from "vuex-map-fields";
-
+import { schema } from "~/store/members";
 export default {
   data() {
     return {
@@ -88,6 +94,13 @@ export default {
   },
   computed: {
     ...mapFields(["auth"]),
+  },
+  methods: {
+    logout() {
+      this.auth.isLoggedIn = false;
+      this.auth.user = schema;
+      this.$router.push("/login");
+    },
   },
 };
 </script>

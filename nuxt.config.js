@@ -45,6 +45,7 @@ export default {
     "~/plugins/vue-lodash.js",
     "~/plugins/vue-particles.js",
     "~/plugins/vue-the-mask.js",
+    "~/plugins/vue-sweetalert2.js"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

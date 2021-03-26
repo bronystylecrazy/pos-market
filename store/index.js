@@ -57,22 +57,22 @@ const createStore = () => new Vuex.Store({
     auth: {
       user: {
         id: 1,
-        image: "https://fakeimage.cc/sirawit",
-        firstName: "Sirawit",
-        lastName: "Pratoomsuwan",
-        phone: "098-378-2018",
-        memberID: "63130500227",
+        image: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
+        memberID: "",
         iat: "",
         uat: "",
-        role: "administrator",
-        email: "s36256@bj.ac.th",
+        role: "",
+        email: "",
         // fake auth
-        username: "admin",
+        username: "",
         get displayName() {
-          return this.firstName + this.lastName
+          return `${this.firstName} ${this.lastName}`
         }
       },
-      isLoggedIn: true
+      isLoggedIn: false
     },
     history: {
       payment: []

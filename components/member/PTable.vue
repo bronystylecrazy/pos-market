@@ -81,7 +81,7 @@ te<template>
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.customerID"
+                      v-model="editedItem.memberID"
                       label="Member ID"
                     ></v-text-field>
                   </v-col>
@@ -104,12 +104,14 @@ te<template>
                       v-mask="'###-###-####'"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="6" sm="12" md="6">
+                  <v-col cols="6" sm="6" md="6">
                     <v-text-field
-                      v-model="editedItem.role"
-                      label="Role"
+                      v-model="editedItem.email"
+                      label="Email"
+                      type="email"
                     ></v-text-field>
                   </v-col>
+
                   <v-col cols="12" sm="12" md="12">
                     <v-list class="mb-2 elevation-2" rounded>
                       <v-list-item>
@@ -153,6 +155,13 @@ te<template>
                       label="Password"
                       type="password"
                     ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-autocomplete
+                      v-model="editedItem.role"
+                      :items="['SuperAdministrator', 'Administrator', 'Member']"
+                      label="Role"
+                    ></v-autocomplete>
                   </v-col>
                 </v-row>
               </v-container>
@@ -253,8 +262,9 @@ export default {
       firstName: "",
       lastName: "",
       phone: "",
+      email: "",
       image: "",
-      role: "",
+      role: "Member",
       username: "",
       password: "",
     },
@@ -263,8 +273,9 @@ export default {
       firstName: "",
       lastName: "",
       phone: "",
+      email: "",
       image: "",
-      role: "",
+      role: "Member",
       username: "",
       password: "",
     },

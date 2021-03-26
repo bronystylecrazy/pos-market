@@ -19,6 +19,7 @@
     "vue-lodash": "^2.1.2",
     "vue-particles": "^1.0.9",
     "vue-randomcolor": "^1.0.4",
+    "vue-sweetalert2": "^4.2.1",
     "vuex-map-fields": "^1.4.1"
   },
   "devDependencies": {

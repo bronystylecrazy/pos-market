@@ -5,7 +5,7 @@
     </v-flex>
     <vue-particles
       v-if="!$vuetify.breakpoint.mobile"
-      color="#1d2228"
+      color="#fff"
       :particleOpacity="0.8"
       :particlesNumber="80"
       shapeType="circle"
@@ -37,6 +37,7 @@
 import { mapFields } from "vuex-map-fields";
 
 export default {
+  middleware: ["auth"],
   transition: "slide-bottom",
   components: {
     GrossSale: () => import("~/components/dashboard/GrossSale"),
