@@ -10,7 +10,7 @@
       <v-list-item class="px-2">
         <v-list-item-avatar>
           <v-img
-            :src="`https://i.pravatar.cc/150?u=${profile.displayName}`"
+            :src="`https://i.pravatar.cc/150?u=${auth.user.firstName}%20${auth.user.lastName}`"
           ></v-img>
         </v-list-item-avatar>
       </v-list-item>
@@ -18,9 +18,9 @@
       <v-list-item link>
         <v-list-item-content>
           <v-list-item-title class="title">
-            {{ profile.displayName }}
+            {{ auth.user.fistName }} {{ auth.user.lastName }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ profile.email }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ auth.user.email }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -73,15 +73,21 @@ export default {
         },
         {
           title: "Manage Customer",
-          icon: "mdi-accounts",
+          icon: "mdi-account-group",
           to: "/customer",
+          color: "gray",
+        },
+        {
+          title: "Manage Member",
+          icon: "mdi-account-supervisor-circle-outline",
+          to: "/member",
           color: "gray",
         },
       ],
     };
   },
   computed: {
-    ...mapFields(["profile"]),
+    ...mapFields(["auth"]),
   },
 };
 </script>

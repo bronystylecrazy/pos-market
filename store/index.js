@@ -4,6 +4,8 @@ import {
   products
 } from './products';
 import { customers } from './customers';
+import { members } from "./members";
+
 // Import the `getField` getter and the `updateField`
 // mutation function from the `vuex-map-fields` module.
 import {
@@ -27,6 +29,7 @@ const categoryColours = _.zipObject(categories, categories.map(_ => randomColor(
 
 const createStore = () => new Vuex.Store({
   state: {
+    members,
     products,
     customers,
     carts: [],
@@ -51,10 +54,25 @@ const createStore = () => new Vuex.Store({
         reward: 0
       }
     },
-    profile: {
-      displayName: "Sirawit Pratoomsuwan",
-      email: "s36526@bj.ac.th",
-      url: "https://randomuser.me/api/portraits/women/85.jpg"
+    auth: {
+      user: {
+        id: 1,
+        image: "https://fakeimage.cc/sirawit",
+        firstName: "Sirawit",
+        lastName: "Pratoomsuwan",
+        phone: "098-378-2018",
+        memberID: "63130500227",
+        iat: "",
+        uat: "",
+        role: "administrator",
+        email: "s36256@bj.ac.th",
+        // fake auth
+        username: "admin",
+        get displayName() {
+          return this.firstName + this.lastName
+        }
+      },
+      isLoggedIn: true
     },
     history: {
       payment: []
