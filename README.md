@@ -17,7 +17,7 @@
 - [x] Quick keys and product lookup 
   (quickly search, filter, and add products)
 - [x] Payment page (permission ADMIN)
-- [ ] Login, Register, and Logout pages
+- [x] Login, Register, and Logout pages
 
 *Backend(with realtime database if possible)*
 - [ ] Login & Register, Logout

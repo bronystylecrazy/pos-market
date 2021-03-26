@@ -2,7 +2,7 @@
   <v-row justify="center">
     <vue-particles
       v-if="!$vuetify.breakpoint.mobile"
-      color="#1d2228"
+      color="#fff"
       :particleOpacity="0.8"
       :particlesNumber="80"
       shapeType="circle"
@@ -29,7 +29,10 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card class="py-10">
         <v-card-title>
-          <span class="headline">Login to Sirawit-POS</span>
+          <span class="headline"
+            ><v-icon left>mdi-clipboard-edit-outline</v-icon>Login to
+            Sirawit-POS</span
+          >
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -59,7 +62,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="teal" text @click="handleLogIn"> Login </v-btn>
+          <v-btn color="teal" text @click="handleLogIn">
+            <v-icon left>mdi-login-variant</v-icon> Login
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -91,6 +96,7 @@ export default {
       if (result.length >= 1) {
         this.auth.user = fillSchema(result[0]);
         this.auth.isLoggedIn = true;
+
         this.$swal("Login success!", "Yaaaayyyyy", "success").then(() => {
           this.$router.push("/");
         });
@@ -110,6 +116,7 @@ export default {
   created() {
     this.auth.isLoggedIn = false;
     this.auth.user = schema;
+    localStorage.clear();
   },
 };
 </script>

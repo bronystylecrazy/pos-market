@@ -54,7 +54,7 @@ te<template>
               v-bind="attrs"
               v-on="on"
             >
-              New Customer
+              <v-icon left>mdi-notebook-edit-outline</v-icon> New Customer
             </v-btn>
             <v-btn
               dark

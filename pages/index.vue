@@ -5,7 +5,7 @@
     </v-flex>
     <vue-particles
       v-if="!$vuetify.breakpoint.mobile"
-      color="#fff"
+      color="#1d2228"
       :particleOpacity="0.8"
       :particlesNumber="80"
       shapeType="circle"

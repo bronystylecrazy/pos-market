@@ -99,6 +99,7 @@ export default {
     logout() {
       this.auth.isLoggedIn = false;
       this.auth.user = schema;
+      localStorage.clear();
       this.$router.push("/login");
     },
   },

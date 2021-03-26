@@ -33,11 +33,11 @@ export default {
     },
   },
   created() {
-    this.header = "Manage products";
+    this.header = "Manage Product";
   },
   data() {
     return {
-      tab: "",
+      tab: 0,
     };
   },
 };

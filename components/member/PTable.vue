@@ -59,7 +59,7 @@ te<template>
               v-bind="attrs"
               v-on="on"
             >
-              New Member
+              <v-icon left>mdi-notebook-edit-outline</v-icon> New Member
             </v-btn>
             <v-btn
               dark
@@ -83,6 +83,7 @@ te<template>
                     <v-text-field
                       v-model="editedItem.memberID"
                       label="Member ID"
+                      v-mask="'###########'"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6" sm="12" md="6">
@@ -159,7 +160,7 @@ te<template>
                   <v-col cols="12" sm="12" md="12">
                     <v-autocomplete
                       v-model="editedItem.role"
-                      :items="['SuperAdministrator', 'Administrator', 'Member']"
+                      :items="roles"
                       label="Role"
                     ></v-autocomplete>
                   </v-col>
@@ -284,7 +285,7 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New Member" : "Edit Member";
     },
-    ...mapFields(["products", "header", "checkout", "members"]),
+    ...mapFields(["products", "header", "checkout", "members", "roles"]),
     filteredMembers() {
       return this.members;
     },

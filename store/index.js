@@ -3,8 +3,15 @@ import Vuex from 'vuex';
 import {
   products
 } from './products';
-import { customers } from './customers';
-import { members } from "./members";
+import {
+  customers
+} from './customers';
+import {
+  members
+} from "./members";
+import {
+  roles
+} from './role';
 
 // Import the `getField` getter and the `updateField`
 // mutation function from the `vuex-map-fields` module.
@@ -16,6 +23,12 @@ import _ from "lodash";
 import randomColor from "randomcolor";
 
 Vue.use(Vuex);
+import createPersistedState from "vuex-persistedstate";
+import SecureLS from "secure-ls";
+
+var ls = new SecureLS({
+  isCompression: false
+});
 
 const sortBy = Object.keys(products[0] || {});
 sortBy.unshift("None");
@@ -28,8 +41,18 @@ const categoryColours = _.zipObject(categories, categories.map(_ => randomColor(
 })));
 
 const createStore = () => new Vuex.Store({
+  plugins: [createPersistedState({
+    key: "fakestore",
+    fetchBeforeUse: true,
+    storage: {
+      getItem: (key) => ls.get(key),
+      setItem: (key, value) => ls.set(key, value),
+      removeItem: (key) => ls.remove(key),
+    },
+  })],
   state: {
     members,
+    roles,
     products,
     customers,
     carts: [],

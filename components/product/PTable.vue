@@ -57,6 +57,7 @@
               v-bind="attrs"
               v-on="on"
             >
+              <v-icon left>mdi-notebook-edit-outline</v-icon>
               New Product
             </v-btn>
             <v-btn
