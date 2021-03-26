@@ -30,6 +30,12 @@ var ls = new SecureLS({
   isCompression: false
 });
 
+import {
+  customAlphabet
+} from 'nanoid';
+const alphabet = '0123456789ABCDEF';
+const nanoid = customAlphabet(alphabet, 20);
+
 const sortBy = Object.keys(products[0] || {});
 sortBy.unshift("None");
 
@@ -53,10 +59,14 @@ const createStore = () => new Vuex.Store({
   state: {
     members,
     roles,
-    products,
+    products: products.map(product => ({
+      ...product,
+      productID: nanoid()
+    })),
     customers,
     carts: [],
     header: "{{header}}",
+    toggle_exclusive: undefined,
     checkout: {
       search: "",
       sort: "None",
@@ -105,6 +115,18 @@ const createStore = () => new Vuex.Store({
     // Add the `getField` getter to the
     // `getters` of your Vuex store instance.
     getField,
+    dashboard(state) {
+      const customers = state.customers.length;
+      const inStock = state.products.length;
+      const grossSale = state.carts.reduce((r, a) => Number.parseFloat(r) + Number.parseFloat(a.price) * Number.parseInt(a.quantity), 0);
+      const productSale = state.carts.reduce((r, a) => Number.parseInt(r) + Number.parseInt(a.quantity), 0);
+      return {
+        grossSale,
+        productSale,
+        inStock,
+        customers
+      }
+    },
   },
   mutations: {
     // Add the `updateField` mutation to the

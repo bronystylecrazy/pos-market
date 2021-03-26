@@ -29,7 +29,7 @@
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
         <img
-          :src="`https://avatars.dicebear.com/api/jdenticon/${item.image}.svg`"
+          :src="`https://avatars.dicebear.com/api/jdenticon/${editedItem.image}.svg`"
           alt="John"
       /></v-avatar>
     </template>

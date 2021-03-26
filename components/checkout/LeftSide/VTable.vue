@@ -17,9 +17,9 @@
             {{ product.id }}
           </td>
           <td>
-            <v-avatar color="primary" size="32">
+            <v-avatar size="32">
               <img
-                :src="`https://avatars.dicebear.com/api/jdenticon/${product.title}.svg`"
+                :src="`https://avatars.dicebear.com/api/jdenticon/${product.image}.svg`"
                 alt="John"
             /></v-avatar>
           </td>
@@ -32,7 +32,7 @@
               color="primary"
               small
               @click="addToCart(product)"
-              >Add</v-btn
+              ><v-icon left>mdi-cart-plus</v-icon> Add</v-btn
             >
           </td>
         </tr>

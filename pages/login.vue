@@ -34,6 +34,10 @@
             Sirawit-POS</span
           >
         </v-card-title>
+        <v-card-subtitle class="red--text mt-2"
+          >**fake <b>username</b> and <b>password</b>: <b>admin</b>
+          <b>123456789</b></v-card-subtitle
+        >
         <v-card-text>
           <v-container>
             <v-row>

@@ -12,18 +12,7 @@
     ></v-text-field>
     <template v-if="$vuetify.breakpoint.mdAndUp">
       <v-spacer></v-spacer>
-      <v-select
-        v-model="checkout.sort"
-        flat
-        solo-inverted
-        hide-details
-        dense
-        style="width: 50px"
-        :items="checkout.sortBy"
-        single-line
-        prepend-inner-icon="mdi-magnify"
-        label="Sort by"
-      ></v-select>
+
       <v-select
         v-model="checkout.category"
         class="ml-2 nowrap"
@@ -38,6 +27,20 @@
         label="Category"
       >
       </v-select>
+      <v-btn-toggle
+        v-model="toggle_exclusive"
+        class="ml-2 nowrap"
+        small
+        color="transparent"
+        mandatory
+      >
+        <v-btn>
+          <v-icon>mdi-format-align-left</v-icon>
+        </v-btn>
+        <v-btn>
+          <v-icon>mdi-format-align-center</v-icon>
+        </v-btn>
+      </v-btn-toggle>
     </template>
   </v-toolbar>
 </template>
@@ -47,7 +50,7 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
   computed: {
-    ...mapFields(["products", "checkout"]),
+    ...mapFields(["products", "checkout", "toggle_exclusive"]),
   },
 };
 </script>

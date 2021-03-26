@@ -32,9 +32,7 @@ te<template>
     </template>
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
-        <img
-          :src="`https://i.pravatar.cc/190?u=${item.firstName}%20${item.lastName}`"
-          alt="John"
+        <img :src="`https://i.pravatar.cc/190?u=${item.image}`" alt="John"
       /></v-avatar>
     </template>
     <template v-slot:top>
@@ -118,13 +116,13 @@ te<template>
                       <v-list-item>
                         <v-list-item-avatar color="primary">
                           <v-img
-                            :src="`https://avatars.dicebear.com/api/jdenticon/${editedItem.image}.svg`"
+                            :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
                           ></v-img>
                         </v-list-item-avatar>
                         <v-list-item-content>
                           <v-text-field
                             v-model="editedItem.image"
-                            placeholder="https://avatars.dicebear.com/api/jdenticon/productname.svg"
+                            placeholder="fake avatar.."
                             label="Image"
                           ></v-text-field>
                         </v-list-item-content>

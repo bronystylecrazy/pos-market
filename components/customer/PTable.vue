@@ -27,9 +27,7 @@ te<template>
     </template>
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
-        <img
-          :src="`https://avatars.dicebear.com/api/jdenticon/${item.image}.svg`"
-          alt="John"
+        <img :src="`https://i.pravatar.cc/190?u=${item.image}`" alt="John"
       /></v-avatar>
     </template>
     <template v-slot:top>
@@ -78,6 +76,7 @@ te<template>
                     <v-text-field
                       v-model="editedItem.customerID"
                       label="Customer ID"
+                      v-mask="'###########'"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6" sm="12" md="6">
@@ -105,13 +104,13 @@ te<template>
                       <v-list-item>
                         <v-list-item-avatar color="primary">
                           <v-img
-                            :src="`https://avatars.dicebear.com/api/jdenticon/${editedItem.image}.svg`"
+                            :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
                           ></v-img>
                         </v-list-item-avatar>
                         <v-list-item-content>
                           <v-text-field
                             v-model="editedItem.image"
-                            placeholder="https://avatars.dicebear.com/api/jdenticon/productname.svg"
+                            placeholder="fake avatar.."
                             label="Image"
                           ></v-text-field>
                         </v-list-item-content>
@@ -297,9 +296,9 @@ export default {
       if (this.editedIndex > -1) {
         const newData = {
           ...this.editedItem,
-          iat: date,
           uat: date,
         };
+        if (typeof data.iat === "undefined") data.iat = date;
         Object.assign(this.customers[this.editedIndex], newData);
       } else {
         const data = {
@@ -308,9 +307,14 @@ export default {
             Number.parseInt(this.customers[this.customers.length - 1].id || 0) +
             1,
           uat: date,
+          iat: date,
+          service: {
+            reward: 0,
+            visit: 0,
+            store: 0,
+          },
         };
 
-        if (typeof data.iat === "undefined") data.iat = date;
         this.customers.push(data);
       }
       this.close();

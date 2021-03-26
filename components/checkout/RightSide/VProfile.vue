@@ -4,16 +4,16 @@
       <v-list-item>
         <v-list-item-avatar>
           <v-img
-            :src="`https://avatars.dicebear.com/api/avataaars/${checkout.customerProfile.displayName}.svg`"
+            :src="`https://i.pravatar.cc/190?u=${myCustomer.image}`"
           ></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
-            v-text="checkout.customerProfile.displayName"
+            v-text="`${myCustomer.firstName} ${myCustomer.lastName}`"
           ></v-list-item-title>
 
           <v-list-item-subtitle
-            v-text="checkout.customerProfile.customerID"
+            v-text="myCustomer.customerID"
           ></v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -39,7 +39,7 @@
             <v-list-item-content>
               <v-list-item-subtitle v-text="`Store`"></v-list-item-subtitle>
               <v-list-item-title
-                v-text="checkout.customerProfile.store.toFixed(2)"
+                v-text="myCustomer.service.store.toFixed(2)"
               ></v-list-item-title>
             </v-list-item-content>
           </v-list-item> </v-list
@@ -53,7 +53,7 @@
             <v-list-item-content>
               <v-list-item-subtitle v-text="`Reward`"></v-list-item-subtitle>
               <v-list-item-title
-                v-text="checkout.customerProfile.reward"
+                v-text="myCustomer.service.reward"
               ></v-list-item-title>
             </v-list-item-content>
           </v-list-item> </v-list
@@ -67,7 +67,7 @@
             <v-list-item-content>
               <v-list-item-subtitle v-text="`Visit`"></v-list-item-subtitle>
               <v-list-item-title
-                v-text="checkout.customerProfile.visit"
+                v-text="myCustomer.service.visit"
               ></v-list-item-title>
             </v-list-item-content>
           </v-list-item> </v-list
@@ -80,7 +80,22 @@
 import { mapFields } from "vuex-map-fields";
 export default {
   computed: {
-    ...mapFields(["products", "checkout", "carts"]),
+    ...mapFields(["products", "checkout", "carts", "customers"]),
+    myCustomer() {
+      const customer = this.customers.filter(
+        (customer) => customer.customerID === this.checkout.payment.customer
+      );
+      // this.checkout.customerProfile =
+      return (
+        customer[0] || {
+          service: {
+            visit: 0,
+            store: 0,
+            reward: 0,
+          },
+        }
+      );
+    },
   },
 };
 </script>

@@ -13,7 +13,7 @@
         >
           SUBTOTAL {{ subtotal }} $</v-btn
         >
-        <v-btn class="font-weight-bold" color="teal" dark flat
+        <v-btn class="font-weight-bold" color="teal" dark flat @click="purchase"
           ><v-icon left>mdi-cash-multiple</v-icon>Purchase</v-btn
         ></v-card
       >
@@ -32,6 +32,15 @@ export default {
         subtotal += c.price * c.quantity;
       }
       return subtotal.toFixed(2);
+    },
+  },
+  methods: {
+    purchase() {
+      this.$swal(
+        "This method is in process!",
+        "It will be finished as soon as possible!",
+        "info"
+      );
     },
   },
 };

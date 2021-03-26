@@ -3,7 +3,7 @@
     <v-card-title class="font-weight-bold">✨ Today</v-card-title>
     <h3 class="text-center pt-4">Totals</h3>
     <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
-      $ 254,360,451
+      $ {{ dashboard.grossSale.toFixed(2) }}
     </h1>
     <h2 class="text-center pb-8 grey--text heading-5">
       <v-icon>mdi-cube</v-icon> Gross Sales
@@ -12,21 +12,27 @@
     <v-row>
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
-        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">18</h1>
+        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
+          {{ dashboard.productSale.toFixed(2) }}
+        </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-cube-send</v-icon> Products Sale
         </h2>
       </v-col>
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
-        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">365</h1>
+        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
+          {{ dashboard.inStock }}
+        </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-cube-scan</v-icon> Product in stock
         </h2>
       </v-col>
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
-        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">26</h1>
+        <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
+          {{ dashboard.customers }}
+        </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-clipboard-account-outline</v-icon> Customers
         </h2>
@@ -43,7 +49,13 @@
 </template>
 
 <script>
-export default {};
+import { mapGetters } from "vuex";
+
+export default {
+  computed: {
+    ...mapGetters(["dashboard"]),
+  },
+};
 </script>
 
 <style lang="scss" scoped>
