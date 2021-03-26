@@ -3,7 +3,7 @@ export const customers = [{
     image: "https://fakeimage.cc/sirawit",
     firstName: "Sirawit",
     lastName: "Pratoomsuwan",
-    phone: "0983782018",
+    phone: "098-378-2018",
     customerID: "63130500227",
     service: {
         store: 0.00,

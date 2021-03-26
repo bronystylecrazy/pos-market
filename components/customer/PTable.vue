@@ -13,7 +13,12 @@ te<template>
     <template #item.name="{ item }">
       <b>{{ item.firstName }} {{ item.lastName }}</b>
     </template>
-
+    <template #item.customerID="{ item }">
+      <b>{{ item.customerID }}</b>
+    </template>
+    <template #item.phone="{ item }">
+      {{ item.phone | VMask("###-###-####") }}
+    </template>
     <template #item.iat="{ item }">
       {{ new Date(item.iat) }}
     </template>
@@ -89,8 +94,9 @@ te<template>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model.number="editedItem.phone"
+                      v-model="editedItem.phone"
                       label="Phone Number"
+                      v-mask="'###-###-####'"
                     ></v-text-field>
                   </v-col>
 
@@ -228,7 +234,7 @@ export default {
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "New Customer" : "Edit Customer";
     },
     ...mapFields(["products", "header", "checkout", "customers"]),
     filteredCustomers() {
@@ -251,23 +257,23 @@ export default {
     initialize() {},
     deleteSelected() {
       for (var s of this.selected) {
-        this.products.splice(this.products.indexOf(s), 1);
+        this.customers.splice(this.customers.indexOf(s), 1);
       }
     },
     editItem(item) {
-      this.editedIndex = this.products.indexOf(item);
+      this.editedIndex = this.customers.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.products.indexOf(item);
+      this.editedIndex = this.customers.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.products.splice(this.editedIndex, 1);
+      this.customers.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -287,19 +293,25 @@ export default {
       });
     },
     save() {
+      const date = Date.now();
       if (this.editedIndex > -1) {
-        Object.assign(this.products[this.editedIndex], this.editedItem);
+        const newData = {
+          ...this.editedItem,
+          iat: date,
+          uat: date,
+        };
+        Object.assign(this.customers[this.editedIndex], newData);
       } else {
         const data = {
           ...this.editedItem,
           id:
-            Number.parseInt(this.products[this.products.length - 1].id || 0) +
+            Number.parseInt(this.customers[this.customers.length - 1].id || 0) +
             1,
+          uat: date,
         };
-        this.products.push(data);
 
-        if (!this.checkout.categories.includes(data.category))
-          this.checkout.categories.push(data.category);
+        if (typeof data.iat === "undefined") data.iat = date;
+        this.customers.push(data);
       }
       this.close();
     },

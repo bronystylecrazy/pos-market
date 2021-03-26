@@ -15,10 +15,10 @@
     "nanoid": "^3.1.22",
     "nuxt": "^2.15.3",
     "randomcolor": "^0.6.2",
+    "v-mask": "^2.2.4",
     "vue-lodash": "^2.1.2",
     "vue-particles": "^1.0.9",
     "vue-randomcolor": "^1.0.4",
-    "vue-the-mask": "^0.11.1",
     "vuex-map-fields": "^1.4.1"
   },
   "devDependencies": {
