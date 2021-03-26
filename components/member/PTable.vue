@@ -19,6 +19,11 @@ te<template>
     <template #item.phone="{ item }">
       {{ item.phone | VMask("###-###-####") }}
     </template>
+
+    <template #item.role="{ item }">
+      <v-chip dark color="red" class="font-weight-bold">{{ item.role }}</v-chip>
+    </template>
+
     <template #item.iat="{ item }">
       {{ new Date(item.iat) }}
     </template>
@@ -77,7 +82,7 @@ te<template>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.customerID"
-                      label="Customer ID"
+                      label="Member ID"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6" sm="12" md="6">
@@ -134,6 +139,20 @@ te<template>
                         </v-list-item-action>
                       </v-list-item>
                     </v-list>
+                  </v-col>
+                  <!-- fake out !!!!-->
+                  <v-col cols="6" sm="12" md="6">
+                    <v-text-field
+                      v-model="editedItem.username"
+                      label="Username"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6" sm="12" md="6">
+                    <v-text-field
+                      v-model="editedItem.password"
+                      label="Password"
+                      type="password"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -222,7 +241,8 @@ export default {
         value: "role",
       },
       { text: "Phone", value: "phone", sortable: true, width: "10%" },
-      { text: "Created at", value: "iat", sortable: true },
+      { text: "Email", value: "email", sortable: true },
+      // { text: "Created at", value: "iat", sortable: true },
       { text: "Updated at", value: "uat", sortable: true },
       { text: "Actions", value: "actions", sortable: false },
     ],
@@ -235,6 +255,8 @@ export default {
       phone: "",
       image: "",
       role: "",
+      username: "",
+      password: "",
     },
     defaultItem: {
       memberID: "",
@@ -243,6 +265,8 @@ export default {
       phone: "",
       image: "",
       role: "",
+      username: "",
+      password: "",
     },
   }),
   computed: {
