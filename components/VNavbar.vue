@@ -71,6 +71,12 @@ export default {
           to: "/product",
           color: "orange",
         },
+        {
+          title: "Manage Customer",
+          icon: "mdi-accounts",
+          to: "/customer",
+          color: "gray",
+        },
       ],
     };
   },

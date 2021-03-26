@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div><PTable /></div>
 </template>
 
 <script>
@@ -7,12 +7,14 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
   transition: "slide-bottom",
-  components: {},
+  components: {
+    PTable: () => import("~/components/customer/PTable"),
+  },
   computed: {
     ...mapFields(["products", "header"]),
   },
   created() {
-    this.header = "Dashboard";
+    this.header = "Manage Customer";
   },
 };
 </script>

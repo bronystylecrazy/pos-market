@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import {
   products
 } from './products';
-
+import { customers } from './customers';
 // Import the `getField` getter and the `updateField`
 // mutation function from the `vuex-map-fields` module.
 import {
@@ -28,6 +28,7 @@ const categoryColours = _.zipObject(categories, categories.map(_ => randomColor(
 const createStore = () => new Vuex.Store({
   state: {
     products,
+    customers,
     carts: [],
     header: "{{header}}",
     checkout: {
