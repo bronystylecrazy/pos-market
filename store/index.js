@@ -109,7 +109,8 @@ const createStore = () => new Vuex.Store({
     },
     history: {
       payment: []
-    }
+    },
+    persistentToken: nanoid()
   },
   getters: {
     // Add the `getField` getter to the
@@ -120,6 +121,7 @@ const createStore = () => new Vuex.Store({
       const inStock = state.products.length;
       const grossSale = state.carts.reduce((r, a) => Number.parseFloat(r) + Number.parseFloat(a.price) * Number.parseInt(a.quantity), 0);
       const productSale = state.carts.reduce((r, a) => Number.parseInt(r) + Number.parseInt(a.quantity), 0);
+
       return {
         grossSale,
         productSale,
@@ -132,7 +134,18 @@ const createStore = () => new Vuex.Store({
     // Add the `updateField` mutation to the
     // `mutations` of your Vuex store instance.
     updateField,
+    updatePersistent(state) {
+      state.persistentToken = nanoid()
+      console.log(state.persistentToken);
+    }
   },
+  actions: {
+    up({
+      commit
+    }) {
+      commit("updatePersistent")
+    }
+  }
 });
 
 export default createStore;

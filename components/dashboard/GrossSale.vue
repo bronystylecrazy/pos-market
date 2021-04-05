@@ -40,7 +40,7 @@
     </v-row>
     <v-row justify="center">
       <v-col md="4" sm="12" class="px-8"
-        ><v-btn block tile color="primary"
+        ><v-btn block tile color="primary" @click="printReport"
           ><v-icon left>mdi-printer</v-icon>Print Report</v-btn
         ></v-col
       >
@@ -54,6 +54,15 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters(["dashboard"]),
+  },
+  methods: {
+    printReport() {
+      this.$swal(
+        "This method is in process!",
+        "It will be finished as soon as possible!",
+        "info"
+      );
+    },
   },
 };
 </script>

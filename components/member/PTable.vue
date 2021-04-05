@@ -306,22 +306,26 @@ export default {
       for (var s of this.selected) {
         this.members.splice(this.members.indexOf(s), 1);
       }
+      this.$store.dispatch("up");
     },
     editItem(item) {
       this.editedIndex = this.members.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
+      this.$store.dispatch("up");
     },
 
     deleteItem(item) {
       this.editedIndex = this.members.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
+      this.$store.dispatch("up");
     },
 
     deleteItemConfirm() {
       this.members.splice(this.editedIndex, 1);
       this.closeDelete();
+      this.$store.dispatch("up");
     },
 
     close() {
@@ -330,6 +334,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.$store.dispatch("up");
     },
 
     closeDelete() {
@@ -338,6 +343,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.$store.dispatch("up");
     },
     save() {
       const date = Date.now();
@@ -360,6 +366,7 @@ export default {
         this.members.push(data);
       }
       this.close();
+      this.$store.dispatch("up");
     },
   },
 };

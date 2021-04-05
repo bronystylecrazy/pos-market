@@ -63,6 +63,7 @@ export default {
       for (var p of this.carts) {
         if (p.title === product.title) {
           p.quantity += 1;
+          this.$store.dispatch("up");
           return;
         }
       }
@@ -70,6 +71,7 @@ export default {
         quantity: 1,
         ...product,
       });
+      this.$store.dispatch("up");
     },
   },
 };

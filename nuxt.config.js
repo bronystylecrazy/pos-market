@@ -6,6 +6,7 @@ export default {
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
+  fallback: true,
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -15,17 +16,17 @@ export default {
       lang: 'en'
     },
     meta: [{
-      charset: 'utf-8'
-    },
-    {
-      name: 'viewport',
-      content: 'width=device-width, initial-scale=1'
-    },
-    {
-      hid: 'description',
-      name: 'description',
-      content: ''
-    }
+        charset: 'utf-8'
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1'
+      },
+      {
+        hid: 'description',
+        name: 'description',
+        content: ''
+      }
     ],
     link: [{
       rel: 'icon',
@@ -55,8 +56,28 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    '@nuxtjs/netlify-files',
   ],
-
+  netlifyFiles: {
+    netlifyToml: {
+      //  build: {
+      //    environment: {
+      //      FOO: process.env.FOO
+      //    }
+      //  },
+      //  headers: [{
+      //    for: '/*',
+      //    values: {
+      //      'X-XSS-Protection': '1; mode=block'
+      //    }
+      //  }],
+      redirects: [{
+        from: '/*',
+        to: '/',
+        status: 302
+      }]
+    }
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios

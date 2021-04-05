@@ -76,6 +76,7 @@ export default {
         if (p.id !== product.id) arr.push(p);
       }
       this.carts = arr;
+      this.$store.dispatch("up");
     },
   },
 };
