@@ -73,7 +73,7 @@ export default {
       //  }],
       redirects: [{
         from: '/*',
-        to: '/',
+        to: '/index.html',
         status: 302
       }]
     }
