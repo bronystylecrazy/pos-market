@@ -159,12 +159,17 @@ const createStore = () => new Vuex.Store({
       commit,
       state
     }) {
-      commit('SET_APPLICATION_LOADING', true)
+      commit("SET_DASHBOARD_OVERVIEW", {
+        productInStock: 0,
+        grossSales: 0.0,
+        productSales: 0,
+        customers: 0
+      });
       const {
         data
       } = await this.$axios.get(`/transaction/overview?token=${state.auth.access_token}`);
       commit("SET_DASHBOARD_OVERVIEW", data.response);
-      commit('SET_APPLICATION_LOADING', false);
+      console.log("fetchOverview", data);
       return data;
     },
     async fetchProduct({
@@ -263,7 +268,8 @@ const createStore = () => new Vuex.Store({
         dispatch("fetchCustomer"),
         dispatch("fetchProduct"),
         dispatch("fetchCategory"),
-        dispatch("fetchRole")
+        dispatch("fetchRole"),
+        dispatch("fetchOverview")
       ]);
       console.log("Done fetching all.");
     },

@@ -33,7 +33,7 @@ export default {
               console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
-              await this.$store.dispatch("fetchCustomer");
+              await this.$store.dispatch("fetchCustomer", this.$store.dispatch("fetchOverview"));
               this.application.loading = false;
               this.$toast("Customer updated!", {
                 timeout: 3500,
@@ -48,7 +48,7 @@ export default {
               console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
-              await Promise.all([this.$store.dispatch("fetchMember")]);
+              await Promise.all([this.$store.dispatch("fetchMember"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
               this.$toast("Member updated!", {
                 timeout: 3500,
@@ -63,7 +63,7 @@ export default {
               console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
-              await Promise.all([this.$store.dispatch("fetchProduct")]);
+              await Promise.all([this.$store.dispatch("fetchProduct"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
               this.$toast("Product updated!", {
                 timeout: 3500,
