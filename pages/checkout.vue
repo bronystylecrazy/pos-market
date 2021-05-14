@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout row class="mt-1">
     <v-flex md8 class="px-2">
       <VFilterNew />
       <VTableNew class="mt-3" />
@@ -29,6 +29,7 @@ export default {
   },
   async created() {
     this.header = "Checkout";
+    this.application.appbar = false;
     this.application.loading = true;
     await this.$store.dispatch("fetch");
     this.application.loading = false;

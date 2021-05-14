@@ -47,6 +47,7 @@ export default {
   },
   async created() {
     this.header = "Dashboard";
+    this.application.appbar = false;
     this.application.loading = true;
     await this.$store.dispatch("fetch");
     this.application.loading = false;

@@ -16,6 +16,7 @@ export default {
   },
   async created() {
     this.header = "Manage Member";
+    this.application.appbar = true;
     this.application.loading = true;
     await this.$store.dispatch("fetch");
     this.application.loading = false;

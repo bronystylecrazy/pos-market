@@ -1,23 +1,24 @@
 <template>
-  <v-toolbar color="rgb(29, 34, 40)" flat class="rounded">
+  <v-toolbar dark color="rgb(29, 34, 40)" flat class="rounded">
     <v-toolbar-title class="title mr-6 hidden-sm-and-down">
-      Product total {{ products.length }} items
+      <b>Point Of Sale</b> Checkout
     </v-toolbar-title>
     <!-- <v-divider vertical></v-divider> -->
     <v-spacer></v-spacer>
     <v-autocomplete
+      light
       v-model="model"
       :items="items"
       :loading="isLoading"
       :search-input.sync="search"
-      chips
       clearable
       hide-details
       hide-selected
-      item-text="name"
-      item-value="symbol"
+      item-text="title"
+      item-value="title"
       label="Search for a product"
       solo
+      flat
       class="ml-10"
       style="width: 200px"
       dense
@@ -39,43 +40,72 @@
           v-on="on"
         >
           <v-icon left> mdi-bitcoin </v-icon>
-          <span v-text="item.name"></span>
+          <span v-text="item.title"></span>
         </v-chip>
       </template>
       <template v-slot:item="{ item }">
         <v-list-item-avatar
           color="indigo"
           class="headline font-weight-light white--text"
+          :disabled="item.stock <= 0"
         >
-          {{ item.name.charAt(0) }}
+          <v-img :src="item.image"></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title v-text="item.name"></v-list-item-title>
-          <v-list-item-subtitle v-text="item.symbol"></v-list-item-subtitle>
+          <v-list-item-title
+            ><b>{{ item.title }}</b></v-list-item-title
+          >
+          <v-list-item-subtitle>
+            <v-chip
+              label
+              x-small
+              color="#fbbd08"
+              dark
+              flat
+              style="width: 50px"
+              class="text-center"
+              >$ {{ item.price }}</v-chip
+            >
+            <v-chip
+              label
+              x-small
+              color="#db2828"
+              dark
+              flat
+              v-if="item.stock <= 0"
+              ><b>Out of stock</b></v-chip
+            >
+            <v-chip v-else label x-small color="#b5cc18" dark flat
+              ><b>Available</b></v-chip
+            >
+          </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
-          <v-icon>mdi-bitcoin</v-icon>
+          <v-btn text small>
+            <v-icon
+              v-for="icon in item.category.split(',')"
+              :key="icon"
+              class="grey--text text--darken-1"
+            >
+              {{ categories.find((category) => category.name === icon).image }}
+            </v-icon>
+          </v-btn>
         </v-list-item-action>
       </template>
     </v-autocomplete>
     <template v-slot:extension>
-      <v-tabs
-        v-model="tab"
-        :hide-slider="!model"
-        color="blue-grey"
-        slider-color="blue-grey"
-        dark
-      >
-        <v-tab :disabled="!model"> News </v-tab>
-        <v-tab :disabled="!model"> Trading </v-tab>
-        <v-tab :disabled="!model"> Blog </v-tab>
+      <v-tabs v-model="tab" color="blue-grey" slider-color="blue-grey" dark>
+        <v-tab v-for="category in displayCategories" :key="category.name">
+          <v-icon left>{{ category.image }}</v-icon>
+          {{ category.name }}
+        </v-tab>
       </v-tabs>
     </template>
   </v-toolbar>
 </template>
 
 <script>
-import { mapFields } from "~/node_modules/vuex-map-fields/dist";
+import { mapFields } from "~/node_modules/vuex-map-fields";
 export default {
   data: () => ({
     isLoading: false,
@@ -85,7 +115,10 @@ export default {
     tab: null,
   }),
   computed: {
-    ...mapFields(["products"]),
+    ...mapFields(["products", "categories", "auth"]),
+    displayCategories() {
+      return [{ name: "All", image: "mdi-clipboard-list" }, ...this.categories];
+    },
   },
   watch: {
     model(val) {
@@ -98,14 +131,11 @@ export default {
 
       this.isLoading = true;
 
-      // Lazily load input items
-      fetch("https://api.coingecko.com/api/v3/coins/list")
-        .then((res) => res.clone().json())
-        .then((res) => {
-          this.items = res;
-        })
-        .catch((err) => {
-          console.log(err);
+      this.$axios
+        .get(`/product/?token=${this.auth.access_token}`)
+        .then(({ data }) => {
+          console.log(data);
+          this.items = data.response;
         })
         .finally(() => (this.isLoading = false));
     },

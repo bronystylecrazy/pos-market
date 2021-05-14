@@ -41,13 +41,21 @@
       <v-list-item-content>
         <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
         <div class="overline mb-4">
-          <v-chip label small v-if="item.stock <= 0"
-            ><b>Out of stock</b></v-chip
+          <v-chip label small v-if="item.stock <= 0" dark color="#db2828"
+            ><v-icon small left>mdi-hexagon-multiple-outline</v-icon
+            ><b>Sold out</b></v-chip
           >
-          <v-chip label small v-else class="custom-chip"
-            ><b
-              >In stock {{ item.stock }} EA{{ item.stock >= 1 ? "s" : "" }}</b
-            ></v-chip
+          <v-chip label small v-else-if="item.stock <= 10" dark color="#fbbd08"
+            ><v-icon small left>mdi-hexagon-multiple</v-icon
+            ><b> {{ item.stock }} plcs</b></v-chip
+          >
+          <v-chip label small v-else-if="item.stock <= 100" dark color="#00b5ad"
+            ><v-icon small left>mdi-hexagon-multiple</v-icon
+            ><b> {{ item.stock }} plcs</b></v-chip
+          >
+          <v-chip label small v-else class="custom-chip" color="#2185d0" dark
+            ><v-icon small left>mdi-hexagon-multiple</v-icon
+            ><b> {{ item.stock }} plcs</b></v-chip
           >
         </div>
       </v-list-item-content>

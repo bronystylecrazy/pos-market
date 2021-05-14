@@ -70,6 +70,7 @@ const createStore = () => new Vuex.Store({
         realtime_notify: true,
         console_log: true
       },
+      appbar: true
     }
   },
   getters: {
