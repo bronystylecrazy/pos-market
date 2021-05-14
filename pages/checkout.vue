@@ -1,15 +1,10 @@
 <template>
   <v-layout row>
-    <v-flex md8>
-      <VLFilter />
-      <VLTable />
+    <v-flex md8 class="px-2">
+      <VFilterNew />
+      <VTableNew class="mt-3" />
     </v-flex>
-    <v-flex md4 class="pl-2">
-      <VRFilter />
-      <VRProfile />
-      <VRTable />
-      <VMethod />
-    </v-flex>
+    <v-flex md4 class="pl-2"></v-flex>
   </v-layout>
 </template>
 
@@ -20,18 +15,23 @@ export default {
   middleware: ["auth"],
   transition: "slide-bottom",
   components: {
-    VLTable: () => import("~/components/checkout/LeftSide/VTable"),
-    VLFilter: () => import("~/components/checkout/LeftSide/VFilter"),
-    VRFilter: () => import("~/components/checkout/RightSide/VFilter"),
-    VRProfile: () => import("~/components/checkout/RightSide/VProfile"),
-    VRTable: () => import("~/components/checkout/RightSide/VTable"),
-    VMethod: () => import("~/components/checkout/RightSide/VMethod"),
+    VTableNew: () => import("~/components/checkout/LeftSide/VTableNew"),
+    VFilterNew: () => import("~/components/checkout/LeftSide/VFilterNew"),
   },
   computed: {
-    ...mapFields(["products", "header", "carts", "checkout.categories"]),
+    ...mapFields([
+      "products",
+      "header",
+      "carts",
+      "checkout.categories",
+      "application",
+    ]),
   },
-  created() {
+  async created() {
     this.header = "Checkout";
+    this.application.loading = true;
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
 };
 </script>

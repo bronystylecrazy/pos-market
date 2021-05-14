@@ -6,33 +6,81 @@ te<template>
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
     show-select
     :search="search"
+    :loading="application.loading"
+    loading-text="Loading... Please wait"
   >
     <template #item.id="{ item }">
       <b>{{ item.id }}</b>
     </template>
     <template #item.name="{ item }">
-      <b>{{ item.firstName }} {{ item.lastName }}</b>
+      <v-chip label v-bind="attrs" v-on="on" pill>
+        <v-avatar left>
+          <v-img>
+            <img :src="item.image" />
+          </v-img>
+        </v-avatar>
+        <b>{{ item.first_name }} {{ item.last_name }}</b></v-chip
+      >
     </template>
     <template #item.customerID="{ item }">
-      <b>{{ item.customerID }}</b>
+      <v-chip label class="mr-2">
+        <v-icon left> mdi-barcode </v-icon>
+        <b>{{ item.customerID }}</b>
+      </v-chip>
     </template>
     <template #item.phone="{ item }">
-      {{ item.phone | VMask("###-###-####") }}
+      <v-chip label class="mr-2">
+        <v-icon left> mdi-card-account-phone </v-icon>
+        {{ item.phone | VMask("###-###-####") }}
+      </v-chip>
+    </template>
+
+    <template #item.visit="{ item }">
+      <v-chip>
+        <v-icon left>mdi-poll-box</v-icon>
+        {{ item.visit }}</v-chip
+      >
+    </template>
+    <template #item.store="{ item }">
+      <v-chip>
+        <v-icon left>mdi-store</v-icon>
+        {{ item.store }}</v-chip
+      >
+    </template>
+    <template #item.reward="{ item }">
+      <v-chip>
+        <v-icon left>mdi-medal</v-icon>
+        {{ item.reward }}</v-chip
+      >
     </template>
     <template #item.iat="{ item }">
-      {{ new Date(item.iat) }}
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip label v-bind="attrs" v-on="on">
+            <v-icon left>mdi-clock-alert</v-icon>
+            {{ $moment(new Date(item.iat)).fromNow() }}</v-chip
+          >
+        </template>
+        <span>{{ new Date(item.iat) }}</span>
+      </v-tooltip>
     </template>
     <template #item.uat="{ item }">
-      {{ new Date(item.uat) }}
-    </template>
-    <template #item.image="{ item }" style="width: 20%">
-      <v-avatar color="primary" size="32">
-        <img :src="`https://i.pravatar.cc/190?u=${item.image}`" alt="John"
-      /></v-avatar>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip label v-bind="attrs" v-on="on">
+            <v-icon left>mdi-clock-check</v-icon
+            >{{ $moment(new Date(item.uat)).fromNow() }}</v-chip
+          >
+        </template>
+        <span>{{ new Date(item.uat) }}</span>
+      </v-tooltip>
     </template>
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Manage Customer</v-toolbar-title>
+        <v-toolbar-title
+          ><v-icon left>mdi-account-supervisor-circle-outline</v-icon>Manage
+          Customer</v-toolbar-title
+        >
         <v-divider class="mx-4" inset vertical></v-divider>
 
         <v-text-field
@@ -71,65 +119,63 @@ te<template>
 
             <v-card-text>
               <v-container>
-                <v-row>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field
-                      v-model="editedItem.customerID"
-                      label="Customer ID"
-                      v-mask="'###########'"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="12" md="6">
-                    <v-text-field
-                      v-model="editedItem.firstName"
-                      label="First Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="12" md="6">
-                    <v-text-field
-                      v-model="editedItem.lastName"
-                      label="Last Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field
-                      v-model="editedItem.phone"
-                      label="Phone Number"
-                      v-mask="'###-###-####'"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" sm="12" md="12">
-                    <v-list class="mb-2 elevation-2" rounded>
-                      <v-list-item>
-                        <v-list-item-avatar color="primary">
-                          <v-img
-                            :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
-                          ></v-img>
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-text-field
-                            v-model="editedItem.image"
-                            placeholder="fake avatar.."
-                            label="Image"
-                          ></v-text-field>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-btn icon>
-                            <v-icon
-                              color="grey lighten-1"
-                              @click="
-                                checkout.customerProfile.show = !checkout
-                                  .customerProfile.show
-                              "
-                              >mdi-information</v-icon
-                            >
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                </v-row>
+                <v-text-field
+                  v-model="editedItem.first_name"
+                  label="First Name"
+                ></v-text-field>
+                <v-text-field
+                  v-model="editedItem.last_name"
+                  label="Last Name"
+                ></v-text-field>
+                <v-text-field
+                  v-model="editedItem.phone"
+                  label="Phone Number"
+                  prepend-inner-icon="mdi-card-account-phone"
+                  v-mask="'###-###-####'"
+                ></v-text-field>
+                <v-text-field
+                  v-model="editedItem.reward"
+                  prepend-inner-icon="mdi-medal"
+                  label="Reward"
+                ></v-text-field>
+                <v-text-field
+                  v-model="editedItem.visit"
+                  prepend-inner-icon="mdi-poll-box"
+                  label="Visit"
+                ></v-text-field>
+                <v-text-field
+                  v-model="editedItem.store"
+                  label="Store"
+                  prepend-inner-icon="mdi-store"
+                ></v-text-field>
+                <v-list class="mb-2 elevation-2" rounded>
+                  <v-list-item>
+                    <v-list-item-avatar color="primary">
+                      <v-img
+                        :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
+                      ></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-text-field
+                        v-model="editedItem.image"
+                        placeholder="fake avatar.."
+                        label="Image"
+                      ></v-text-field>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          color="grey lighten-1"
+                          @click="
+                            checkout.customerProfile.show = !checkout
+                              .customerProfile.show
+                          "
+                          >mdi-information</v-icon
+                        >
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
               </v-container>
             </v-card-text>
 
@@ -160,8 +206,12 @@ te<template>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-btn fab x-small color="teal" dark>
+        <v-icon @click="editItem(item)"> mdi-pencil </v-icon>
+      </v-btn>
+      <v-btn fab x-small color="red" dark>
+        <v-icon @click="deleteItem(item)"> mdi-delete </v-icon>
+      </v-btn>
     </template>
     <!-- <template v-slot:no-data>
       <v-btn color="primary" @click="initialize"> Reset </v-btn>
@@ -184,58 +234,70 @@ export default {
       {
         text: "#ID",
         value: "id",
-        align: "center",
+        align: "left",
         sortable: true,
         width: "4%",
       },
       {
         text: "#Customer ID",
         value: "customerID",
-        align: "center",
+        align: "left",
         sortable: true,
         width: "10%",
       },
+      // {
+      //   text: "Picture",
+      //   value: "image",
+      //   align: "center",
+      //   sortable: false,
+      //   width: "4%",
+      // },
       {
-        text: "Picture",
-        value: "image",
-        align: "center",
-        sortable: false,
-        width: "4%",
-      },
-      {
-        text: "Name",
+        text: "Firstname-Lastname",
         align: "start",
         sortable: true,
         value: "name",
         width: "20%",
       },
       { text: "Phone", value: "phone", sortable: true },
-      { text: "Created at", value: "iat", sortable: true },
-      { text: "Updated at", value: "uat", sortable: true },
+      { text: "visit", value: "visit", sortable: true },
+      { text: "reward", value: "reward", sortable: true },
+      { text: "store", value: "store", sortable: true },
+      { text: "Created at", value: "iat", align: "left", sortable: true },
+      { text: "Updated at", value: "uat", align: "left", sortable: true },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
     editedIndex: -1,
     editedItem: {
-      customerID: "",
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       image: "",
+      reward: 0,
+      store: 0,
+      visit: 0,
     },
     defaultItem: {
-      customerID: "",
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       image: "",
+      reward: 0,
+      store: 0,
+      visit: 0,
     },
   }),
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New Customer" : "Edit Customer";
     },
-    ...mapFields(["products", "header", "checkout", "customers"]),
+    ...mapFields([
+      "products",
+      "header",
+      "checkout",
+      "customers",
+      "application",
+    ]),
     filteredCustomers() {
       return this.customers;
     },
@@ -254,78 +316,41 @@ export default {
 
   methods: {
     initialize() {},
-    deleteSelected() {
-      for (var s of this.selected) {
-        this.customers.splice(this.customers.indexOf(s), 1);
-      }
-      this.$store.dispatch("up");
-    },
-    editItem(item) {
-      this.editedIndex = this.customers.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.$store.dispatch("up");
-    },
-
+    deleteSelected() {},
+    editItem(item) {},
     deleteItem(item) {
-      this.editedIndex = this.customers.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-      this.$store.dispatch("up");
+      this.$swal
+        .fire({
+          icon: "question",
+          title: "Do you want to delete this customer?",
+          text: "You cannot undo the changes!",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: `Yes, please.`,
+          cancelButtonText: `No, that was a mistake.`,
+        })
+        .then(async (result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            const data = await this.$store.dispatch("deleteCustomer", item.id);
+            if (!data.error)
+              this.$swal.fire(data.title, data.message, "success");
+          } else if (result.isDenied) {
+            this.$swal.fire(
+              "Changes are not saved!",
+              "Selected customer wasn't deleted!",
+              "error"
+            );
+          }
+        });
     },
 
-    deleteItemConfirm() {
-      this.customers.splice(this.editedIndex, 1);
-      this.closeDelete();
-      this.$store.dispatch("up");
-    },
+    deleteItemConfirm() {},
 
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-      this.$store.dispatch("up");
-    },
+    close() {},
 
-    closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-      this.$store.dispatch("up");
-    },
-    save() {
-      const date = Date.now();
-      if (this.editedIndex > -1) {
-        const newData = {
-          ...this.editedItem,
-          uat: date,
-        };
-        if (typeof data.iat === "undefined") data.iat = date;
-        Object.assign(this.customers[this.editedIndex], newData);
-      } else {
-        const data = {
-          ...this.editedItem,
-          id:
-            Number.parseInt(this.customers[this.customers.length - 1].id || 0) +
-            1,
-          uat: date,
-          iat: date,
-          service: {
-            reward: 0,
-            visit: 0,
-            store: 0,
-          },
-        };
-
-        this.customers.push(data);
-      }
-      this.close();
-      this.$store.dispatch("up");
-    },
+    closeDelete() {},
+    save() {},
   },
 };
 </script>

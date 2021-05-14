@@ -27,17 +27,24 @@
       "
     ></vue-particles>
     <v-dialog v-model="dialog" persistent max-width="600px">
-      <v-card class="py-10">
-        <v-card-title>
+      <v-card :loading="loading">
+        <template slot="progress">
+          <v-progress-linear
+            color="teal"
+            height="5"
+            indeterminate
+          ></v-progress-linear>
+        </template>
+        <v-card-title class="pt-10">
           <span class="headline"
             ><v-icon left>mdi-clipboard-edit-outline</v-icon>Login to
             Sirawit-POS</span
           >
         </v-card-title>
-        <v-card-subtitle class="red--text mt-2"
-          >**fake <b>username</b> and <b>password</b>: <b>admin</b>
-          <b>123456789</b></v-card-subtitle
-        >
+        <v-divider></v-divider>
+        <v-card-subtitle class="mt-5"
+          >** backend api <b>pos-market-api by Sirawit Pratoomsuwan</b>
+        </v-card-subtitle>
         <v-card-text>
           <v-container>
             <v-row>
@@ -48,25 +55,58 @@
                   required
                   autofocus
                   autocomplete="off"
-                  @keyup.enter="handleLogIn"
+                  @keyup.enter="handleLogIn(3500)"
+                  :disabled="loading"
                 ></v-text-field>
               </v-col>
+
               <v-col cols="12">
                 <v-text-field
                   label="Password*"
                   v-model="data.password"
                   type="password"
-                  @keyup.enter="handleLogIn"
+                  @keyup.enter="handleLogIn(3500)"
+                  :disabled="loading"
                   required
                 ></v-text-field>
               </v-col>
+              <v-alert
+                prominent
+                type="error"
+                v-if="!!$route.query.error_message && showError"
+              >
+                <v-row align="center">
+                  <v-col class="grow">
+                    {{ error_message }}
+                  </v-col>
+                  <v-col class="shrink">
+                    <v-btn @click="showError = false">Close</v-btn>
+                  </v-col>
+                </v-row>
+              </v-alert>
             </v-row>
           </v-container>
-          <small>*indicates required field</small>
+
+          <small>Don't have an account? </small>
+          <small
+            ><a
+              color="dark"
+              @click="$router.push('/register')"
+              :loading="loading"
+            >
+              Create new account!
+            </a></small
+          >
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="px-10 pb-10">
           <v-spacer></v-spacer>
-          <v-btn color="teal" text @click="handleLogIn">
+          <v-btn
+            color="teal"
+            @click="handleLogIn(3500)"
+            large
+            :loading="loading"
+            block
+          >
             <v-icon left>mdi-login-variant</v-icon> Login
           </v-btn>
         </v-card-actions>
@@ -76,7 +116,8 @@
 </template>
 <script>
 import { mapFields } from "vuex-map-fields";
-import { fillSchema, schema } from "~/store/members";
+import { fillSchema, schema } from "~/store/models/members";
+
 export default {
   layout: "authentication",
   middleware: ["guest"],
@@ -87,31 +128,41 @@ export default {
     },
     dialog: true,
     error: false,
+    loading: false,
+    error_message: "",
+    showError: true,
   }),
   methods: {
-    async handleLogIn() {
-      const result = this.members.filter((member) => {
-        return (
-          member.username === this.data.username &&
-          member.password === this.data.password
-        );
-      });
+    async handleLogIn(timer = 1500) {
+      this.loading = true;
+      try {
+        const params = { ...this.data };
+        const data = await this.$store.dispatch("login", params);
+        if (!data.error) {
+          this.auth.user = data.response;
+          this.auth.access_token = data.meta.access_token;
+          this.auth.isLoggedIn = true;
+          console.log(data);
+          console.log(this.auth);
+        }
 
-      if (result.length >= 1) {
-        this.auth.user = fillSchema(result[0]);
-        this.auth.isLoggedIn = true;
-
-        this.$swal("Login success!", "Yaaaayyyyy", "success").then(() => {
-          this.$router.push("/");
-        });
-        return false;
+        this.$swal({
+          title: data.title,
+          text: data.message,
+          icon: data.error ? "error" : "success",
+          timer,
+        }).then(() => this.$router.push("/"));
+      } catch (err) {
+        this.$swal
+          .fire({
+            title: err.message,
+            text: "Couldn't connect to the server!",
+            icon: "error",
+            timer: 3500,
+          })
+          .then(() => this.$router.push("/login"));
       }
-      this.$swal("Error go away!!", "ASAP", "error").then(() => {
-        this.data.username = "";
-        this.data.password = "";
-      });
-      this.data.username = "";
-      this.data.password = "";
+      this.loading = false;
     },
   },
   computed: {
@@ -121,6 +172,26 @@ export default {
     this.auth.isLoggedIn = false;
     this.auth.user = schema;
     localStorage.clear();
+    this.error_message = this.$route.query.error_message;
+
+    if (!!this.$route.query.pwd) {
+      try {
+        const data = JSON.parse(atob(this.$route.query.pwd));
+        console.log(data);
+        this.data.username = data.username;
+        this.data.password = data.password;
+        this.handleLogIn(500);
+      } catch (err) {
+        this.$swal
+          .fire({
+            title: "Login failed!",
+            text: "invalid quick-login token!",
+            icon: "error",
+            timer: 1500,
+          })
+          .then(() => this.$router.push("/login"));
+      }
+    }
   },
 };
 </script>

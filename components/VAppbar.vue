@@ -1,6 +1,5 @@
 <template>
   <v-app-bar app tile flat color="transparent" hide-on-scroll>
-    <v-app-bar-nav-icon class="grey--text"></v-app-bar-nav-icon>
     <v-toolbar-title class="grey--text"
       ><b>Point Of Sale</b> {{ header }}</v-toolbar-title
     >

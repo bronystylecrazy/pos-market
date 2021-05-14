@@ -12,10 +12,13 @@ export default {
     PTable: () => import("~/components/member/PTable"),
   },
   computed: {
-    ...mapFields(["products", "header"]),
+    ...mapFields(["products", "header", "application"]),
   },
-  created() {
+  async created() {
     this.header = "Manage Member";
+    this.application.loading = true;
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
 };
 </script>

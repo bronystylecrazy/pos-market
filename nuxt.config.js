@@ -34,29 +34,28 @@ export default {
       href: '/favicon.ico'
     }]
   },
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     "~/assets/style.css"
   ],
-
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     "~/plugins/vue-randomcolor.js",
     "~/plugins/vue-lodash.js",
     "~/plugins/vue-particles.js",
     "~/plugins/vue-the-mask.js",
-    "~/plugins/vue-sweetalert2.js"
+    "~/plugins/vue-sweetalert2.js",
+    "~/plugins/vue-notification.js"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
-
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
     '@nuxtjs/netlify-files',
+    '@nuxtjs/moment'
   ],
   netlifyFiles: {
     netlifyToml: {
@@ -85,7 +84,9 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:8080'
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

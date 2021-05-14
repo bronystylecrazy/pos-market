@@ -27,20 +27,7 @@
         label="Category"
       >
       </v-select>
-      <v-btn-toggle
-        v-model="toggle_exclusive"
-        class="ml-2 nowrap"
-        small
-        color="transparent"
-        mandatory
-      >
-        <v-btn>
-          <v-icon>mdi-format-align-left</v-icon>
-        </v-btn>
-        <v-btn>
-          <v-icon>mdi-format-align-center</v-icon>
-        </v-btn>
-      </v-btn-toggle>
+      
     </template>
   </v-toolbar>
 </template>

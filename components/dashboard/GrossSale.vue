@@ -3,7 +3,7 @@
     <v-card-title class="font-weight-bold">✨ Today</v-card-title>
     <h3 class="text-center pt-4">Totals</h3>
     <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
-      $ {{ dashboard.grossSale.toFixed(2) }}
+      <!-- $ {{ dashboard.grossSale.toFixed(2) }} -->
     </h1>
     <h2 class="text-center pb-8 grey--text heading-5">
       <v-icon>mdi-cube</v-icon> Gross Sales
@@ -13,7 +13,7 @@
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
         <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
-          {{ dashboard.productSale.toFixed(2) }}
+          <!-- {{ dashboard.productSale.toFixed(2) }} -->
         </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-cube-send</v-icon> Products Sale
@@ -22,7 +22,7 @@
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
         <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
-          {{ dashboard.inStock }}
+          <!-- {{ dashboard.inStock }} -->
         </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-cube-scan</v-icon> Product in stock
@@ -31,7 +31,7 @@
       <v-col md="4">
         <h3 class="text-center pt-4">Totals</h3>
         <h1 class="text-center py-0 pt-3 font-weight-bold display-2">
-          {{ dashboard.customers }}
+          <!-- {{ dashboard.customers }} -->
         </h1>
         <h2 class="text-center pb-8 grey--text heading-5">
           <v-icon>mdi-clipboard-account-outline</v-icon> Customers

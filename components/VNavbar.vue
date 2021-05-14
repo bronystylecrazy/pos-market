@@ -9,18 +9,16 @@
     <v-list>
       <v-list-item class="px-2">
         <v-list-item-avatar>
-          <v-img
-            :src="`https://i.pravatar.cc/150?u=${auth.user.firstName}%20${auth.user.lastName}`"
-          ></v-img>
+          <v-img :src="`${auth.user.image}`"></v-img>
         </v-list-item-avatar>
       </v-list-item>
 
       <v-list-item link>
         <v-list-item-content>
           <v-list-item-title class="title">
-            {{ auth.user.displayName }}
+            {{ auth.user.first_name }} {{ auth.user.last_name }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ auth.user.role }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ auth.user.roles }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -45,18 +43,24 @@
     </v-list>
 
     <template v-slot:append>
-      <div class="pa-2">
+      <!-- <div class="pa-2">
         <v-btn block color="red" dark @click="logout">
           <v-icon left>mdi-logout</v-icon> Logout
         </v-btn>
-      </div>
+      </div> -->
+      <v-list nav dense>
+        <v-list-item link class="red" dark @click="logout">
+          <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+          <v-list-item-title class="font-weight-bold">Logout</v-list-item-title>
+        </v-list-item>
+      </v-list>
     </template>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { mapFields } from "vuex-map-fields";
-import { schema } from "~/store/members";
+import { schema } from "~/store/models/members";
 export default {
   data() {
     return {
@@ -91,6 +95,12 @@ export default {
           to: "/member",
           color: "gray",
         },
+        {
+          title: "Account setting",
+          icon: "mdi-account-cog",
+          to: "/me",
+          color: "gray",
+        },
       ],
     };
   },
@@ -100,7 +110,7 @@ export default {
   methods: {
     logout() {
       this.auth.isLoggedIn = false;
-      this.auth.user = schema;
+      this.auth.user = {};
       localStorage.clear();
       this.$router.push("/login");
     },

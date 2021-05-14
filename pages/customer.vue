@@ -11,11 +11,17 @@ export default {
   components: {
     PTable: () => import("~/components/customer/PTable"),
   },
-  computed: {
-    ...mapFields(["products", "header"]),
+  data() {
+    return {};
   },
-  created() {
+  computed: {
+    ...mapFields(["products", "header", "application"]),
+  },
+  async created() {
     this.header = "Manage Customer";
+    this.application.loading = true;
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
 };
 </script>

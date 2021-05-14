@@ -10,8 +10,9 @@
 
 <script>
 export default {
-  created() {
+  async created() {
     this.$vuetify.theme.dark = true;
+    await this.$store.dispatch("fetchRole");
   },
 };
 </script>

@@ -43,10 +43,13 @@ export default {
     GrossSale: () => import("~/components/dashboard/GrossSale"),
   },
   computed: {
-    ...mapFields(["products", "header"]),
+    ...mapFields(["products", "header", "application"]),
   },
-  created() {
+  async created() {
     this.header = "Dashboard";
+    this.application.loading = true;
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
 };
 </script>

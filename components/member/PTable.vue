@@ -1,40 +1,83 @@
-te<template>
+<template>
   <v-data-table
     :headers="headers"
     :items="filteredMembers"
     v-model="selected"
+    item-key="uid"
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
     show-select
     :search="search"
+    :loading="application.loading"
   >
     <template #item.id="{ item }">
-      <b>{{ item.id }}</b>
+      <b>{{ item.uid }}</b>
+    </template>
+    <template #item.status="{ item }">
+      <v-chip label color="teal" dark v-if="item.status == 1"
+        ><v-icon left>mdi-access-point</v-icon> <b>Online</b></v-chip
+      >
+      <v-chip label color="warning" v-else-if="item.status == -1"
+        ><v-icon left>mdi-access-point-remove</v-icon> <b>Away</b></v-chip
+      >
+      <v-chip label v-else
+        ><v-icon left>mdi-access-point-off</v-icon> <b>Offline</b></v-chip
+      >
     </template>
     <template #item.name="{ item }">
-      <b>{{ item.firstName }} {{ item.lastName }}</b>
+      <b>{{ item.first_name }} {{ item.last_name }}</b>
     </template>
-    <template #item.customerID="{ item }">
-      <b>{{ item.customerID }}</b>
+    <template #item.memid="{ item }">
+      <b>{{ item.memid }}</b>
     </template>
     <template #item.phone="{ item }">
-      {{ item.phone | VMask("###-###-####") }}
+      <b>{{ item.phone | VMask("###-###-####") }}</b>
     </template>
-
-    <template #item.role="{ item }">
-      <v-chip dark color="red" class="font-weight-bold">{{ item.role }}</v-chip>
+    <template #item.roles="{ item }">
+      <!-- <v-chip dark color="red" class="font-weight-bold">{{
+        item.roles
+      }}</v-chip> -->
+      <v-select
+        :items="filteredRoles"
+        label="Role"
+        :value="item.roles"
+        :disabled="filteredRoles.length <= 1"
+        @change="
+          update(item, {
+            roles: $event,
+          })
+        "
+        :loading="application.loading"
+      ></v-select>
     </template>
-
     <template #item.iat="{ item }">
-      {{ new Date(item.iat) }}
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip label color="teal accent-4" dark v-bind="attrs" v-on="on">
+            <v-icon left>mdi-clock</v-icon
+            ><b>{{ $moment(new Date(item.iat)).fromNow() }}</b></v-chip
+          >
+        </template>
+        <span>{{ new Date(item.iat) }}</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip label color="orange lighten-3" dark v-bind="attrs" v-on="on">
+            <v-icon left>mdi-clock</v-icon
+            ><b>{{ $moment(new Date(item.uat)).fromNow() }}</b></v-chip
+          >
+        </template>
+        <span>{{ new Date(item.uat) }}</span>
+      </v-tooltip>
     </template>
-    <template #item.uat="{ item }">
-      {{ new Date(item.uat) }}
+    <template #item.email="{ item }">
+      <b>{{ item.email }}</b>
     </template>
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
-        <img :src="`https://i.pravatar.cc/190?u=${item.image}`" alt="John"
+        <img :src="item.image" alt="John"
       /></v-avatar>
     </template>
+
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Manage Member</v-toolbar-title>
@@ -56,6 +99,7 @@ te<template>
               class="mb-2 ml-4"
               v-bind="attrs"
               v-on="on"
+              :loading="application.loading"
             >
               <v-icon left>mdi-notebook-edit-outline</v-icon> New Member
             </v-btn>
@@ -65,87 +109,29 @@ te<template>
               v-bind="attrs"
               @click="deleteSelected"
               :disabled="!selected[0]"
+              :loading="application.loading"
             >
-              DELETE SELECTED
+              <v-icon left>mdi-trash-can</v-icon>
+              Delete {{ selected.length }} items
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
 
+          <v-card height="100%" style="overflow: hidden">
+            <v-card-title>
+              <span class="headline"
+                ><v-icon left>mdi-account-edit</v-icon>{{ formTitle }}</span
+              >
+            </v-card-title>
+            <v-divider></v-divider>
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field
-                      v-model="editedItem.memberID"
-                      label="Member ID"
-                      v-mask="'###########'"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="12" md="6">
-                    <v-text-field
-                      v-model="editedItem.firstName"
-                      label="First Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="12" md="6">
-                    <v-text-field
-                      v-model="editedItem.lastName"
-                      label="Last Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="6" md="6">
-                    <v-text-field
-                      v-model="editedItem.phone"
-                      label="Phone Number"
-                      v-mask="'###-###-####'"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6" sm="6" md="6">
-                    <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
-                      type="email"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" sm="12" md="12">
-                    <v-list class="mb-2 elevation-2" rounded>
-                      <v-list-item>
-                        <v-list-item-avatar color="primary">
-                          <v-img
-                            :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
-                          ></v-img>
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-text-field
-                            v-model="editedItem.image"
-                            placeholder="fake avatar.."
-                            label="Image"
-                          ></v-text-field>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-btn icon>
-                            <v-icon
-                              color="grey lighten-1"
-                              @click="
-                                checkout.customerProfile.show = !checkout
-                                  .customerProfile.show
-                              "
-                              >mdi-information</v-icon
-                            >
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
                   <!-- fake out !!!!-->
                   <v-col cols="6" sm="12" md="6">
                     <v-text-field
                       v-model="editedItem.username"
                       label="Username"
+                      prepend-inner-icon="mdi-account-box"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6" sm="12" md="6">
@@ -153,48 +139,117 @@ te<template>
                       v-model="editedItem.password"
                       label="Password"
                       type="password"
+                      prepend-inner-icon="mdi-shield-key"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
-                    <v-autocomplete
-                      v-model="editedItem.role"
-                      :items="roles"
+                    <v-select
+                      v-model="editedItem.roles"
+                      :items="filteredRoles"
                       label="Role"
-                    ></v-autocomplete>
+                    ></v-select>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
+            <v-card-actions class="pb-5">
+              <v-spacer></v-spacer>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
+              <v-btn color="blue darken-1" dark @click="reveal = true">
+                <v-icon left>mdi-arrow-right-bold</v-icon> Next step
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="reveal = dialog = false"
               >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
-              >
-              <v-spacer></v-spacer>
+                <!-- <v-icon left>mdi-arrow-right-bold</v-icon> -->
+                Cancel
+              </v-btn>
             </v-card-actions>
+            <v-expand-transition>
+              <v-card
+                v-if="reveal"
+                class="transition-fast-in-fast-out v-card--reveal"
+                style="height: 100%"
+              >
+                <v-card-text class="pb-0">
+                  <v-row>
+                    <v-col cols="6" sm="12" md="6">
+                      <v-text-field
+                        v-model="editedItem.first_name"
+                        label="First Name"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="12" md="6">
+                      <v-text-field
+                        v-model="editedItem.last_name"
+                        label="Last Name"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="6" md="6">
+                      <v-text-field
+                        v-model="editedItem.phone"
+                        label="Phone Number"
+                        v-mask="'###-###-####'"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="6" md="6">
+                      <v-text-field
+                        v-model="editedItem.email"
+                        label="Email"
+                        type="email"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6" sm="6" md="6">
+                      <v-select
+                        v-model="editedItem.gender"
+                        :items="['Not Mentioned', 'Male', 'Female']"
+                        label="Gender"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="6" sm="6" md="6">
+                      <v-file-input
+                        chips
+                        counter
+                        show-size
+                        truncate-length="15"
+                        label="Upload the product image"
+                        accept="image/png, image/jpeg, image/bmp"
+                        v-model="editedItem.file"
+                      ></v-file-input> </v-col
+                  ></v-row>
+                </v-card-text>
+                <v-card-actions class="pb-5">
+                  <v-btn text color="primary" @click="reveal = false">
+                    <v-icon left>mdi-arrow-left-bold</v-icon>
+                    Previous step
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn color="teal" dark @click="insert()">
+                    <v-icon left>mdi-content-save</v-icon>
+                    Save
+                  </v-btn>
+                  <v-btn text @click="reveal = dialog = false"> Calcel </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-expand-transition>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-icon
+        small
+        class="mr-2"
+        @click="editItem(item)"
+        :disabled="application.loading"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon small @click="deleteItem(item)" :disabled="application.loading">
+        mdi-delete
+      </v-icon>
     </template>
     <!-- <template v-slot:no-data>
       <v-btn color="primary" @click="initialize"> Reset </v-btn>
@@ -204,6 +259,8 @@ te<template>
 
 <script>
 import { mapFields } from "vuex-map-fields";
+import { nanoid } from "nanoid";
+import qs from "qs";
 export default {
   props: {
     tab: Number,
@@ -213,6 +270,7 @@ export default {
     search: "",
     dialog: false,
     dialogDelete: false,
+    reveal: false,
     headers: [
       {
         text: "#ID",
@@ -222,11 +280,11 @@ export default {
         width: "4%",
       },
       {
-        text: "#Member ID",
-        value: "memberID",
+        text: "Status",
+        value: "status",
         align: "center",
-        sortable: true,
-        width: "10%",
+        sortable: false,
+        width: "4%",
       },
       {
         text: "Picture",
@@ -236,138 +294,202 @@ export default {
         width: "4%",
       },
       {
-        text: "Name",
+        text: "Firstname-Lastname",
         align: "start",
         sortable: true,
         value: "name",
-        width: "20%",
       },
       {
         text: "Role",
         align: "start",
         sortable: true,
-        value: "role",
+        value: "roles",
       },
       { text: "Phone", value: "phone", sortable: true, width: "10%" },
       { text: "Email", value: "email", sortable: true },
-      // { text: "Created at", value: "iat", sortable: true },
-      { text: "Updated at", value: "uat", sortable: true },
+      { text: "Created/Updated at", value: "iat", sortable: true },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
     editedIndex: -1,
     editedItem: {
-      memberID: "",
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       email: "",
       image: "",
-      role: "Member",
+      roles: "Member",
+      gender: "Not Mentioned",
       username: "",
       password: "",
+      file: null,
     },
     defaultItem: {
-      memberID: "",
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       email: "",
       image: "",
-      role: "Member",
+      roles: "Member",
       username: "",
       password: "",
+      gender: "Not Mentioned",
+      file: null,
     },
   }),
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "New Member" : "Edit Member";
     },
-    ...mapFields(["products", "header", "checkout", "members", "roles"]),
+    ...mapFields([
+      "products",
+      "header",
+      "checkout",
+      "members",
+      "roles",
+      "auth",
+      "application",
+    ]),
     filteredMembers() {
-      return this.members;
+      return this.members.filter(
+        (member) => member.memid != this.auth.user.memid
+      );
+    },
+    filteredRoles() {
+      var currentPriority =
+        this.roles.find((r) => r.name.trim() === this.auth.user.roles.trim())
+          ?.priority || 0;
+      console.log(currentPriority);
+      return this.roles
+        .filter((r) => r.priority <= currentPriority)
+        .map((r) => r.name.trim());
     },
   },
 
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
+  watch: {},
 
   created() {},
 
   methods: {
-    initialize() {},
-    deleteSelected() {
-      for (var s of this.selected) {
-        this.members.splice(this.members.indexOf(s), 1);
+    editItem(item) {},
+    save() {},
+    async update(item, params) {
+      try {
+        await this.$store.dispatch("updateAccount", { params, id: item.uid });
+      } catch (e) {}
+    },
+    async insert() {
+      try {
+        const file = this.editedItem.file;
+        if (file == null)
+          this.editItem.image = `https://i.pravatar.cc/150?u=${nanoid()}`;
+        else {
+          const myData = new FormData();
+          myData.append("file", file);
+          const { data } = await this.$axios({
+            method: "post",
+            url: "/upload",
+            headers: { "Content-Type": "multipart/form-data" },
+            data: myData,
+          });
+          console.warn("picture uploaded", data);
+          const preview = data.preview;
+          this.editedItem.image = preview;
+          this.editedItem.file = null;
+        }
+
+        const params = {
+          ...this.editedItem,
+          confirmedPassword: this.editedItem.password,
+        };
+
+        const data = await this.$store.dispatch("register", params);
+        this.$swal.fire({
+          title: data.title,
+          text: data.message,
+          icon: data.error ? "error" : "success",
+          timer: 1500,
+        });
+      } catch (e) {
+        this.$swal("Opps, something went wrong!", e.message, "error");
       }
-      this.$store.dispatch("up");
-    },
-    editItem(item) {
-      this.editedIndex = this.members.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.$store.dispatch("up");
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.members.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
-      this.$store.dispatch("up");
-    },
-
-    deleteItemConfirm() {
-      this.members.splice(this.editedIndex, 1);
-      this.closeDelete();
-      this.$store.dispatch("up");
-    },
-
-    close() {
+      this.reveal = false;
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-      this.$store.dispatch("up");
+      this.editedItem = this.defaultItem;
     },
+    async deleteItem(item) {
+      console.log("deleting", item);
+      this.$swal
+        .fire({
+          icon: "question",
+          title: "Do you want to delete this member?",
+          text: "You cannot undo the changes!",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: `Yes, please.`,
+          cancelButtonText: `No, that was a mistake.`,
+        })
+        .then(async (result) => {
+          /* Read more about isConfirmed, isDenied below */
 
-    closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-      this.$store.dispatch("up");
+          if (result.isConfirmed) {
+            const data = await this.$store.dispatch("deleteAccount", item.uid);
+
+            if (!data.error)
+              this.$swal.fire(data.title, data.message, "success");
+          } else if (result.isDenied) {
+            this.$swal.fire(
+              "Changes are not saved!",
+              "Selected member wasn't deleted!",
+              "error"
+            );
+          }
+        });
     },
-    save() {
-      const date = Date.now();
-      if (this.editedIndex > -1) {
-        const newData = {
-          ...this.editedItem,
-          iat: date,
-          uat: date,
-        };
-        Object.assign(this.members[this.editedIndex], newData);
-      } else {
-        const data = {
-          ...this.editedItem,
-          id:
-            Number.parseInt(this.members[this.members.length - 1].id || 0) + 1,
-          uat: date,
-        };
+    async deleteSelected() {
+      const selected = [...this.selected];
+      console.log("deletingMultiple", selected);
+      this.selected = [];
+      this.$swal
+        .fire({
+          icon: "question",
+          title: `Do you want to delete these ${selected.length} accounts?`,
+          text: "You cannot undo the changes!",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: `Yes, please.`,
+          cancelButtonText: `No, that was a mistake.`,
+        })
+        .then(async (result) => {
+          /* Read more about isConfirmed, isDenied below */
 
-        if (typeof data.iat === "undefined") data.iat = date;
-        this.members.push(data);
-      }
-      this.close();
-      this.$store.dispatch("up");
+          if (result.isConfirmed) {
+            selected.forEach(async (account) => {
+              const data = await this.$store.dispatch(
+                "deleteAccount",
+                account.uid
+              );
+              if (data.error) {
+                this.$swal.toast.error(data.message, { icon: true });
+              }
+            });
+          } else if (result.isDenied) {
+            this.$swal.fire(
+              "Changes are not saved!",
+              "Selected accounts weren't deleted!",
+              "error"
+            );
+          }
+        });
     },
   },
 };
 </script>
+
+<style scoped>
+.v-card--reveal {
+  bottom: 0;
+  opacity: 1 !important;
+  position: absolute;
+  width: 100%;
+}
+</style>

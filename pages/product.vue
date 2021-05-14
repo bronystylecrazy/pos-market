@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs
+    <!-- <v-tabs
       dark
       show-arrows
       v-model="tab"
@@ -8,9 +8,9 @@
     >
       <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
       <v-tab v-for="category in categories" :key="category">{{
-        category
+        category.name
       }}</v-tab>
-    </v-tabs>
+    </v-tabs> -->
     <Hello :tab="tab" />
   </div>
 </template>
@@ -25,15 +25,19 @@ export default {
     Hello: () => import("~/components/product/PTable"),
   },
   computed: {
-    ...mapFields(["products", "header", "checkout"]),
-    categories() {
-      const __ = [...this.checkout.categories];
-      __.unshift("ALL");
-      return __;
-    },
+    ...mapFields([
+      "products",
+      "header",
+      "checkout",
+      "categories",
+      "application",
+    ]),
   },
-  created() {
+  async created() {
     this.header = "Manage Product";
+    this.application.loading = true;
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
   data() {
     return {
