@@ -25,7 +25,21 @@
               <template v-if="isChangeName">
                 <v-row>
                   <v-col md="6"
-                    ><v-text-field v-model="auth.user.first_name"></v-text-field
+                    ><v-text-field
+                      v-model="auth.user.first_name"
+                      @change="
+                        save({
+                          last_name: auth.user.last_name,
+                          first_name: auth.user.first_name,
+                        })
+                      "
+                      @keypress.enter="
+                        save({
+                          last_name: auth.user.last_name,
+                          first_name: auth.user.first_name,
+                        })
+                      "
+                    ></v-text-field
                   ></v-col>
                   <v-col md="6"
                     ><v-text-field
@@ -36,7 +50,7 @@
                           first_name: auth.user.first_name,
                         })
                       "
-                      @blur="
+                      @keypress.enter="
                         save({
                           last_name: auth.user.last_name,
                           first_name: auth.user.first_name,

@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout row style="align-content: start">
     <v-flex
       xs12
       sm6
@@ -8,7 +8,13 @@
       :key="product.productid"
       class="pa-3"
     >
-      <PCard :item="product" />
+      <PCard
+        :item="product"
+        v-ripple
+        class="no_selection"
+        style="cursor: pointer"
+        @onClick="addToCart(product)"
+      />
     </v-flex>
     <v-flex md12 class="px-3" v-if="products.length <= 0">
       <v-alert icon="mdi-cube" prominent text type="info">
@@ -33,6 +39,7 @@
 
 <script>
 import { mapFields } from "vuex-map-fields";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -46,7 +53,55 @@ export default {
       "checkout",
       "application",
       "auth",
+      "realtime.stompClient",
     ]),
+    ...mapGetters(["serializeCheckout"]),
+  },
+  methods: {
+    addToCart(item, amount = 1) {
+      const buyingProduct = this.products.find(
+        (product) => product.id === item.id
+      );
+
+      if (typeof buyingProduct === "undefined" || buyingProduct == null) return;
+      let completeAmount = 0;
+      for (var i = 0; i < amount; i++) {
+        if (buyingProduct.stock >= 1) {
+          this.checkout.carts.push(item);
+          buyingProduct.stock -= 1;
+          completeAmount++;
+        }
+      }
+      let payload = this.toBinary(
+        JSON.stringify([
+          ...this.serializeCheckout.map(({ id, stock, buy }) => ({
+            id,
+            stock,
+            buy,
+          })),
+        ])
+      );
+
+      this.stompClient.send(
+        "/app/checkout",
+        JSON.stringify({
+          from: this.auth.user.memid,
+          payload,
+        })
+      );
+
+      return completeAmount;
+    },
+    toBinary(str) {
+      return btoa(
+        encodeURIComponent(str).replace(
+          /%([0-9A-F]{2})/g,
+          function toSolidBytes(match, p1) {
+            return String.fromCharCode("0x" + p1);
+          }
+        )
+      );
+    },
   },
 };
 </script>

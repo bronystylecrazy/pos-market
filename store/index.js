@@ -32,22 +32,23 @@ const createStore = () => new Vuex.Store({
   plugins: [vuexPersistent],
   state: {
     header: "{{header}}",
-
     //arrays
     members: [],
     roles: [],
     products: [],
     customers: [],
-    carts: [],
     categories: [],
-
-
+    dashboard: {
+      overview: {
+        productInStock: 0,
+        grossSales: 0.0,
+        productSales: 0,
+        customers: 0
+      }
+    },
     checkout: {
-      search: "",
-      sort: "",
-      sortBy: [],
-      categoryColours: [],
-      category: [],
+      carts: [],
+      monitorCarts: [],
       payment: {
         customer: "",
         search: "",
@@ -71,13 +72,38 @@ const createStore = () => new Vuex.Store({
         console_log: true
       },
       appbar: true
+    },
+    realtime: {
+      socket: null,
+      stompClient: null,
     }
   },
   getters: {
     getField,
+    serializeCheckout(state) {
+      const obj = {};
+      for (var product of state.checkout.carts) {
+        if (product.id in obj) {
+          obj[product.id].buy++;
+        } else {
+          obj[product.id] = {
+            buy: 1,
+            ...product
+          };
+        }
+      }
+      const serialize = [];
+      for (var product in obj) {
+        serialize.push(obj[product]);
+      }
+      return serialize;
+    }
   },
   mutations: {
     updateField,
+    SET_DASHBOARD_OVERVIEW(state, overview) {
+      state.dashboard.overview = overview;
+    },
     SET_AUTH_USER(state, profile) {
       state.auth.user = profile;
     },
@@ -127,6 +153,18 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.delete(`/account/${uid}`);
+      return data;
+    },
+    async fetchOverview({
+      commit,
+      state
+    }) {
+      commit('SET_APPLICATION_LOADING', true)
+      const {
+        data
+      } = await this.$axios.get(`/transaction/overview?token=${state.auth.access_token}`);
+      commit("SET_DASHBOARD_OVERVIEW", data.response);
+      commit('SET_APPLICATION_LOADING', false);
       return data;
     },
     async fetchProduct({

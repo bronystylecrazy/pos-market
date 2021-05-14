@@ -1,10 +1,19 @@
 <template>
-  <v-layout row class="mt-1">
-    <v-flex md8 class="px-2">
-      <VFilterNew />
-      <VTableNew class="mt-3" />
+  <v-layout row>
+    <v-flex md8>
+      <VFilterNew class="mt-1" />
+      <VTableNew
+        class="mt-1"
+        style="
+          height: calc(100vh - 120px);
+          overflow-y: auto;
+          overflow-x: hidden;
+        "
+      />
     </v-flex>
-    <v-flex md4 class="pl-2"></v-flex>
+    <v-flex md4 class="pl-2">
+      <VCheckOut />
+    </v-flex>
   </v-layout>
 </template>
 
@@ -17,6 +26,7 @@ export default {
   components: {
     VTableNew: () => import("~/components/checkout/LeftSide/VTableNew"),
     VFilterNew: () => import("~/components/checkout/LeftSide/VFilterNew"),
+    VCheckOut: () => import("~/components/checkout/RightSide/VCheckout"),
   },
   computed: {
     ...mapFields([

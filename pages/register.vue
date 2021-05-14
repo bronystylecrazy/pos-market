@@ -134,11 +134,19 @@
                 <v-col cols="12">
                   <v-select
                     label="Role*"
+                    :items="['Not Mentioned', 'Male', 'Female']"
+                    v-model="data.gender"
+                    required
+                    autocomplete="off"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12">
+                  <v-select
+                    label="Role*"
                     :items="filteredRoles"
                     v-model="data.roles"
                     required
                     autocomplete="off"
-                    @keyup.enter="handleRegister"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -179,6 +187,7 @@ export default {
       phone: "",
       email: "",
       roles: "Member",
+      gender: "Not Mentioned",
     },
     dialog: true,
     error: false,

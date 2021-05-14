@@ -9,12 +9,16 @@ import {
 export default {
   data() {
     return {
-      socket: null,
-      stompClient: null,
       messages: {},
     };
   },
   methods: {
+    fromBinary(str) {
+      // Going backwards: from bytestream, to percent-encoding, to original string.
+      return decodeURIComponent(atob(str).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+    },
     connect() {
       this.socket = new SockJS("http://localhost:8080/gs-guide-websocket");
       this.stompClient = Stomp.over(this.socket);
@@ -83,6 +87,13 @@ export default {
               });
             }
           );
+
+          this.stompClient.subscribe("/topic/monitor", (tick) => {
+            const decodedPayload = this.fromBinary(JSON.parse(tick.body).payload);
+            const carts = JSON.parse(decodedPayload);
+            console.log(carts)
+            this.checkout.monitorCarts = carts;
+          });
         },
         (error) => {
           console.log(error);
@@ -94,7 +105,7 @@ export default {
     },
   },
   computed: {
-    ...mapFields(["application", "auth"]),
+    ...mapFields(["application", "auth", "checkout", "realtime.socket", "realtime.stompClient"]),
   },
   created() {
     this.$vuetify.theme.dark = false;

@@ -3,6 +3,9 @@
     class="custome_card mx-auto"
     elevation="0.5"
     :loading="application.loading"
+    @click="$emit('onClick')"
+    @dblclick="$emit('onDoubleClick')"
+    :id="`product-${item.id}`"
   >
     <v-card-title class="ma-0">
       {{ item.title }} <v-spacer></v-spacer>
