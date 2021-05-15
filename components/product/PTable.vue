@@ -182,6 +182,8 @@ export default {
         const file = this.editedItem.file;
         const myData = new FormData();
         myData.append("file", file);
+        console.log(myData);
+
         const { data } = await this.$axios({
           method: "post",
           url: "/upload",

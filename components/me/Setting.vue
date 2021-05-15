@@ -19,6 +19,7 @@
               <v-switch
                 v-model="setting.realtime_notify"
                 :disabled="application.loading"
+                @change="$toast.success('Setting has been updated!')"
               ></v-switch>
             </td>
           </tr>
@@ -29,6 +30,7 @@
               <v-switch
                 v-model="setting.console_log"
                 :disabled="application.loading"
+                @change="$toast.success('Setting has been updated!')"
               ></v-switch>
             </td>
           </tr>

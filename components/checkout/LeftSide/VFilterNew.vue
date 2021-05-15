@@ -81,12 +81,14 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
-          <v-btn text small>
-            <v-icon
-              v-for="icon in item.category.split(',')"
-              :key="icon"
-              class="grey--text text--darken-1"
-            >
+          <v-btn
+            text
+            small
+            v-for="icon in item.category.split(',')"
+            :key="icon"
+            v-if="!!categories.find((category) => category.name === icon)"
+          >
+            <v-icon class="grey--text text--darken-1">
               {{ categories.find((category) => category.name === icon).image }}
             </v-icon>
           </v-btn>
@@ -94,7 +96,12 @@
       </template>
     </v-autocomplete>
     <template v-slot:extension>
-      <v-tabs v-model="tab" color="blue-grey" slider-color="blue-grey" dark>
+      <v-tabs
+        v-model="checkout.category"
+        color="blue-grey"
+        slider-color="blue-grey"
+        dark
+      >
         <v-tab v-for="category in displayCategories" :key="category.name">
           <v-icon left>{{ category.image }}</v-icon>
           {{ category.name }}
@@ -115,7 +122,7 @@ export default {
     tab: null,
   }),
   computed: {
-    ...mapFields(["products", "categories", "auth"]),
+    ...mapFields(["products", "categories", "auth", "checkout"]),
     displayCategories() {
       return [{ name: "All", image: "mdi-clipboard-list" }, ...this.categories];
     },

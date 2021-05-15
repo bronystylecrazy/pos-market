@@ -4,9 +4,10 @@
       xs12
       sm6
       md4
-      v-for="product in products"
+      v-for="product in filteredProducts"
       :key="product.productid"
       class="pa-3"
+      v-show="product.stock > 0"
     >
       <PCard
         :item="product"
@@ -25,6 +26,30 @@
               {{ auth.user.last_name }}</b
             ><br />
             If you want more product, please insert it to your system :).
+          </v-col>
+          <v-col class="shrink">
+            <v-btn @click="$router.push('/product')"
+              ><v-icon left>mdi-cube-send</v-icon>Manage product</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-alert>
+    </v-flex>
+    <v-flex
+      md12
+      class="px-3"
+      v-if="
+        products.length > 1 && products.filter((p) => p.stock > 0).length <= 0
+      "
+    >
+      <v-alert icon="mdi-cube" prominent text type="warning">
+        <v-row align="center">
+          <v-col class="grow">
+            <b
+              >Oh, no... Hey, {{ auth.user.first_name }}
+              {{ auth.user.last_name }}</b
+            ><br />
+            All product is out of stock, please insert it to your system :).
           </v-col>
           <v-col class="shrink">
             <v-btn @click="$router.push('/product')"
@@ -56,6 +81,15 @@ export default {
       "realtime.stompClient",
     ]),
     ...mapGetters(["serializeCheckout"]),
+    filteredProducts() {
+      if (this.checkout.category === 0) return this.products;
+
+      return this.products.filter((p) => {
+        return p.category.startsWith(
+          this.categories[this.checkout.category - 1].name
+        );
+      });
+    },
   },
   methods: {
     addToCart(item, amount = 1) {
@@ -87,6 +121,7 @@ export default {
         JSON.stringify({
           from: this.auth.user.memid,
           payload,
+          transactionID: this.$route.query.trans_id || "Unknown",
         })
       );
 

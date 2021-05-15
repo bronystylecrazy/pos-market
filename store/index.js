@@ -18,7 +18,7 @@ const ls = new SecureLS({
 
 const vuexPersistent = createPersistedState({
   key: "fakestore",
-  paths: ["auth"],
+  paths: ["auth", "application.setting"],
   fetchBeforeUse: true,
   storage: {
     getItem: (key) => ls.get(key),
@@ -55,7 +55,8 @@ const createStore = () => new Vuex.Store({
       },
       customer: {
 
-      }
+      },
+      category: 0
     },
     auth: {
       user: {
@@ -160,10 +161,10 @@ const createStore = () => new Vuex.Store({
       state
     }) {
       commit("SET_DASHBOARD_OVERVIEW", {
-        productInStock: 0,
-        grossSales: 0.0,
-        productSales: 0,
-        customers: 0
+        productInStock: Math.max(0, state.dashboard.overview.productInStock - 1),
+        grossSales: Math.max(state.dashboard.overview.grossSales - 1),
+        productSales: Math.max(state.dashboard.overview.productSales - 1),
+        customers: Math.max(state.dashboard.overview.customers - 1)
       });
       const {
         data
@@ -277,12 +278,13 @@ const createStore = () => new Vuex.Store({
       state,
       dispatch
     }, id) {
-      await dispatch("delete", {
-        repository: "customer",
-        id
-      });
+      const {
+        data
+      } = await this.$axios.delete(`/customer/${id}?token=${state.auth.access_token}`);
+      console.log("deleteCustomer", data);
       return data;
     },
+
     async deleteProduct({
       state,
       commit
@@ -314,13 +316,21 @@ const createStore = () => new Vuex.Store({
       } = await this.$axios.post(`/customer/?${qs.stringify(params)}&token=${state.auth.access_token}`);
       console.log(`insertCustomer`, data);
     },
+    async insertCustomer({
+      state
+    }, params) {
+      const {
+        data
+      } = await this.$axios.post(`/customer/?${qs.stringify(params)}&token=${state.auth.access_token}`);
+      console.log("insertCustomer", data);
+      return data;
+    },
     async insertProduct({
       state,
     }, params) {
       const {
         data
       } = await this.$axios.post(`/product/?${qs.stringify(params)}&token=${state.auth.access_token}`);
-
       console.log(`insertProduct`, data);
       return data;
     },
@@ -335,6 +345,19 @@ const createStore = () => new Vuex.Store({
       } = await this.$axios.put(`/product/${id}?${qs.stringify(params)}&token=${state.auth.access_token}`);
 
       console.log(`updateProduct`, data);
+      return data;
+    },
+    async updateCustomer({
+      state,
+    }, {
+      params,
+      id
+    }) {
+      const {
+        data
+      } = await this.$axios.put(`/customer/${id}?${qs.stringify(params)}&token=${state.auth.access_token}`);
+
+      console.log(`updateCustomer`, data);
       return data;
     },
     async updateAccount({

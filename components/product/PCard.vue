@@ -172,7 +172,8 @@
                             @click="isWithImage = true"
                             color="primary"
                             small
-                            >Change picture</v-btn
+                            ><v-icon left>mdi-image-edit</v-icon>Change
+                            picture</v-btn
                           >
                         </div>
                       </v-list-item-content>

@@ -1,7 +1,17 @@
 <template>
   <v-layout row class="px-3 pt-2" justify-center>
     <v-card class="mt-3" style="width: 100%">
-      <v-card-title class="subtitle">Customer</v-card-title>
+      <v-card-title class="subtitle"
+        >Customer<v-spacer></v-spacer>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn small v-bind="attrs" v-on="on" dark @click="cast"
+              ><v-icon>mdi-cast</v-icon></v-btn
+            >
+          </template>
+          <span>Split the screen realtime</span>
+        </v-tooltip>
+      </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-autocomplete
@@ -83,15 +93,13 @@
                 x-small
                 color="red"
                 style="height: 16px; width: 16px"
+                @click="removeFromCart(item)"
                 ><v-icon style="font-size: 10px">mdi-minus</v-icon></v-btn
               >
             </td>
           </tr>
           <tr v-for="n in blankItem" :key="n">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td colspan="4"></td>
           </tr>
         </tbody>
       </template>
@@ -118,6 +126,17 @@
             :disabled="!select"
             :color="!select ? `#767676` : `#b5cc18`"
             @click="processPayment"
+            v-if="serializeCheckout.length > 0"
+            ><v-icon left>mdi-cash-check</v-icon> Process payment</v-btn
+          >
+          <v-btn
+            block
+            depressed
+            large
+            light
+            disabled
+            @click="processPayment"
+            v-else
             ><v-icon left>mdi-cash-check</v-icon> Process payment</v-btn
           >
           <!-- <v-btn color="#b5cc18" flat dark
@@ -131,6 +150,8 @@
 <script>
 import { mapFields } from "vuex-map-fields";
 import { mapGetters } from "vuex";
+import qs from "qs";
+import { nanoid } from "nanoid";
 
 export default {
   components: {
@@ -143,6 +164,8 @@ export default {
       search: null,
       select: null,
       page: 1,
+      castUrl: "",
+      transactionID: "",
     };
   },
   watch: {
@@ -159,6 +182,7 @@ export default {
       "application",
       "auth",
       "customers",
+      "realtime.stompClient",
     ]),
     ...mapGetters(["serializeCheckout"]),
     states() {
@@ -185,6 +209,12 @@ export default {
     },
   },
   methods: {
+    cast() {
+      window.open(
+        `/monitor?trans_id=${this.$route.query.trans_id || "Unknown"}`,
+        "_blank"
+      );
+    },
     querySelections(v) {
       this.loading = true;
       // Simulated ajax query
@@ -203,15 +233,96 @@ export default {
       clone.reverse();
       return clone;
     },
-    processPayment() {
+    removeFromCart(item) {
+      console.log(item.id);
+      var deletedItems = [
+        ...this.checkout.carts.filter((p) => p.id !== item.id),
+      ];
+      var before = this.checkout.carts.length;
+      this.checkout.carts = deletedItems;
+      var after = this.checkout.carts.length;
+      this.products.find((p) => p.id === item.id).stock += before - after;
+      let payload = this.toBinary(
+        JSON.stringify([
+          ...this.serializeCheckout.map(({ id, stock, buy }) => ({
+            id,
+            stock,
+            buy,
+          })),
+        ])
+      );
+
+      this.stompClient.send(
+        "/app/checkout",
+        JSON.stringify({
+          from: this.auth.user.memid,
+          payload,
+          transactionID: this.$route.query.trans_id || "Unknown",
+        })
+      );
+    },
+    toBinary(str) {
+      return btoa(
+        encodeURIComponent(str).replace(
+          /%([0-9A-F]{2})/g,
+          function toSolidBytes(match, p1) {
+            return String.fromCharCode("0x" + p1);
+          }
+        )
+      );
+    },
+    async processPayment() {
       const items = [...this.serializeCheckout];
-      item.forEach((item) => {
-        this.$axios.post();
-      });
+      let isComplete = 0;
+      let tasks = [];
+      for (var item of items) {
+        const { id, buy } = item;
+        const params = {
+          transactionID: this.$route.query.trans_id || nanoid(),
+          customerID: this.customer.customerID,
+          amount: buy,
+        };
+
+        const promise = this.$axios.post(
+          `/transaction/${id}?${qs.stringify(params)}`
+        );
+
+        tasks.push(promise);
+      }
+
+      await Promise.all(tasks);
+
+      const transactionID = nanoid();
+      const from = this.$route.query.trans_id || "Unknown";
+
+      this.$swal({
+        title: "Sold out products completely!",
+        text: `total ${items.reduce((c, r) => c + r.buy, 0)} items`,
+        icon: "success",
+        timer: 2000,
+      }).then(() => this.$router.push(`/checkout?trans_id=${transactionID}`));
+
+      this.$axios.post(
+        `/event/transaction-complete?token=${this.auth.access_token}`
+      );
+      this.stompClient.send(
+        "/app/transaction-next",
+        JSON.stringify({
+          transactionID,
+          from,
+        })
+      );
+
+      this.checkout.carts = [];
     },
   },
   created() {
+    this.querySelections("");
     this.items = [...this.states];
+    this.transactionID = this.$route.query.trans_id;
+    this.castUrl = `/monitor?${qs.stringify({
+      trans_id: this.transactionID,
+    })}`;
   },
 };
 </script>

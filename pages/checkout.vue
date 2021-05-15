@@ -19,6 +19,8 @@
 
 <script>
 import { mapFields } from "vuex-map-fields";
+import qs from "qs";
+import { nanoid } from "nanoid";
 
 export default {
   middleware: ["auth"],
@@ -39,6 +41,12 @@ export default {
   },
   async created() {
     this.header = "Checkout";
+    if (typeof this.$route.query.trans_id === "undefined") {
+      this.$router.push(`/checkout?${qs.stringify({ trans_id: nanoid(21) })}`);
+    }
+    this.castUrl = `/monitor?${qs.stringify({
+      trans_id: this.$route.query.trans_id,
+    })})}`;
     this.application.appbar = false;
     this.application.loading = true;
     await this.$store.dispatch("fetch");

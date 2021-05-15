@@ -13,7 +13,7 @@ te<template>
       <b>{{ item.id }}</b>
     </template>
     <template #item.name="{ item }">
-      <v-chip label v-bind="attrs" v-on="on" pill>
+      <v-chip label pill>
         <v-avatar left>
           <v-img>
             <img :src="item.image" />
@@ -91,7 +91,7 @@ te<template>
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="680px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -112,95 +112,126 @@ te<template>
               DELETE SELECTED
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+          <v-card :loading="application.loading">
+            <v-form>
+              <v-card-title>
+                <span class="headline"
+                  ><v-icon left>mdi-account-box-multiple</v-icon
+                  >{{ formTitle }}</span
+                >
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-text>
+                <v-container>
+                  <v-text-field
+                    v-model="editedItem.first_name"
+                    label="First Name"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="editedItem.last_name"
+                    label="Last Name"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="editedItem.phone"
+                    label="Phone Number"
+                    prepend-inner-icon="mdi-card-account-phone"
+                    v-mask="'###-###-####'"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="editedItem.reward"
+                    prepend-inner-icon="mdi-medal"
+                    label="Reward"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="editedItem.visit"
+                    prepend-inner-icon="mdi-poll-box"
+                    label="Visit"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="editedItem.store"
+                    label="Store"
+                    prepend-inner-icon="mdi-store"
+                    :disabled="application.loading"
+                  ></v-text-field>
+                  <v-row justify="center">
+                    <v-col md="10" sm="12">
+                      <v-list class="mb-2 elevation-2 text-center" rounded>
+                        <v-list-item>
+                          <v-list-item-avatar size="64" color="primary">
+                            <v-img
+                              v-if="!isEdit"
+                              :src="uploadFile !== null ? uploadFile.url : ''"
+                            ></v-img>
+                            <v-img v-else :src="editedItem.image"></v-img>
+                          </v-list-item-avatar>
+                          <v-list-item-content v-if="isEdit">
+                            <v-list-item-subtitle
+                              >Preview image but you can change
+                              it!</v-list-item-subtitle
+                            >
+                            <div class="overline mb-4" v-if="!isWithImage">
+                              <v-btn
+                                @click="isWithImage = true"
+                                color="primary"
+                                small
+                                class="mt-4"
+                                ><v-icon left>mdi-image-edit</v-icon>Change
+                                picture</v-btn
+                              >
+                            </div>
+                            <v-file-input
+                              chips
+                              counter
+                              show-size
+                              truncate-length="15"
+                              label="Upload the product image"
+                              accept="image/png, image/jpeg, image/bmp"
+                              v-model="uploadFile"
+                              :disabled="application.loading"
+                              v-else
+                            ></v-file-input>
+                          </v-list-item-content>
+                          <v-list-item-content v-else>
+                            <v-file-input
+                              chips
+                              counter
+                              show-size
+                              truncate-length="15"
+                              label="Upload the product image"
+                              accept="image/png, image/jpeg, image/bmp"
+                              v-model="uploadFile"
+                              :disabled="application.loading"
+                            ></v-file-input>
+                          </v-list-item-content>
+                          <v-list-item-action> </v-list-item-action>
+                        </v-list-item>
+                      </v-list>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
 
-            <v-card-text>
-              <v-container>
-                <v-text-field
-                  v-model="editedItem.first_name"
-                  label="First Name"
-                ></v-text-field>
-                <v-text-field
-                  v-model="editedItem.last_name"
-                  label="Last Name"
-                ></v-text-field>
-                <v-text-field
-                  v-model="editedItem.phone"
-                  label="Phone Number"
-                  prepend-inner-icon="mdi-card-account-phone"
-                  v-mask="'###-###-####'"
-                ></v-text-field>
-                <v-text-field
-                  v-model="editedItem.reward"
-                  prepend-inner-icon="mdi-medal"
-                  label="Reward"
-                ></v-text-field>
-                <v-text-field
-                  v-model="editedItem.visit"
-                  prepend-inner-icon="mdi-poll-box"
-                  label="Visit"
-                ></v-text-field>
-                <v-text-field
-                  v-model="editedItem.store"
-                  label="Store"
-                  prepend-inner-icon="mdi-store"
-                ></v-text-field>
-                <v-list class="mb-2 elevation-2" rounded>
-                  <v-list-item>
-                    <v-list-item-avatar color="primary">
-                      <v-img
-                        :src="`https://i.pravatar.cc/190?u=${editedItem.image}`"
-                      ></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-text-field
-                        v-model="editedItem.image"
-                        placeholder="fake avatar.."
-                        label="Image"
-                      ></v-text-field>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-btn icon>
-                        <v-icon
-                          color="grey lighten-1"
-                          @click="
-                            checkout.customerProfile.show = !checkout
-                              .customerProfile.show
-                          "
-                          >mdi-information</v-icon
-                        >
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close()">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="
+                    !isEdit ? insertItem() : updateItem(editItem, isWithImage)
+                  "
+                >
+                  Save
+                </v-btn>
+              </v-card-actions>
+            </v-form>
           </v-card>
         </v-dialog>
       </v-toolbar>
@@ -267,7 +298,7 @@ export default {
       { text: "Updated at", value: "uat", align: "left", sortable: true },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    editedIndex: -1,
+    isEdit: false,
     editedItem: {
       first_name: "",
       last_name: "",
@@ -286,10 +317,12 @@ export default {
       store: 0,
       visit: 0,
     },
+    uploadFile: null,
+    isWithImage: false,
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Customer" : "Edit Customer";
+      return this.isEdit ? "Edit Customer" : "New Customer";
     },
     ...mapFields([
       "products",
@@ -303,21 +336,98 @@ export default {
     },
   },
 
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
+  watch: {},
 
   created() {},
 
   methods: {
-    initialize() {},
+    close() {
+      this.isEdit = this.dialog = this.isWithImage = false;
+      this.editedItem = this.defaultItem;
+    },
     deleteSelected() {},
-    editItem(item) {},
+    editItem(item) {
+      this.isEdit = this.dialog = true;
+      this.editedItem.first_name = item.first_name;
+      this.editedItem.last_name = item.last_name;
+      this.editedItem.phone = item.phone;
+      this.editedItem.image = item.image;
+      this.editedItem.reward = item.reward;
+      this.editedItem.store = item.store;
+      this.editedItem.visit = item.visit;
+      console.log("editItem", item);
+    },
+    async updateItem(item, image = true) {
+      try {
+        if (image) {
+          const file = this.editedItem.file;
+          if (file == null) {
+            this.dialog = this.isWithImage = false;
+            throw new Error("Please upload the file!");
+          }
+          const myData = new FormData();
+          myData.append("file", file);
+          const { data } = await this.$axios({
+            method: "post",
+            url: "/upload",
+            headers: { "Content-Type": "multipart/form-data" },
+            data: myData,
+          });
+          console.warn("picture uploaded", data);
+
+          const preview = data.preview;
+
+          const params = {
+            store: this.editedItem.store,
+            image: this.editedItem.image,
+            first_name: this.editedItem.first_name,
+            last_name: this.editedItem.last_name,
+            phone: this.editedItem.phone,
+            visit: this.editedItem.visit,
+            reward: this.editedItem.reward,
+          };
+
+          console.log("request params", params);
+          this.$store
+            .dispatch("updateCustomer", { params, id: item.id })
+            .then((data) => {
+              this.$swal.fire({
+                title: data.title,
+                text: data.message,
+                icon: data.error ? "error" : "success",
+                timer: 1500,
+              });
+              this.dialog = this.isWithImage = false;
+            });
+        } else {
+          const params = {
+            store: this.editedItem.store,
+            image: this.editedItem.image,
+            first_name: this.editedItem.first_name,
+            last_name: this.editedItem.last_name,
+            phone: this.editedItem.phone,
+            visit: this.editedItem.visit,
+            reward: this.editedItem.reward,
+          };
+
+          console.log("request params", params);
+          this.$store
+            .dispatch("updateCustomer", { params, id: item.id })
+            .then((data) => {
+              this.$swal.fire({
+                title: data.title,
+                text: data.message,
+                icon: data.error ? "error" : "success",
+                timer: 1500,
+              });
+              this.dialog = this.isWithImage = false;
+            });
+        }
+      } catch (e) {
+        this.$swal("Internal Server Error", e.message, "error");
+        this.dialog = this.isWithImage = false;
+      }
+    },
     deleteItem(item) {
       this.$swal
         .fire({
@@ -344,13 +454,89 @@ export default {
           }
         });
     },
+    async deleteSelected() {
+      const selected = [...this.selected];
+      console.log("deletingMultiple", selected);
+      this.selected = [];
+      this.$swal
+        .fire({
+          icon: "question",
+          title: `Do you want to delete these ${selected.length} customers?`,
+          text: "You cannot undo the changes!",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: `Yes, please.`,
+          cancelButtonText: `No, that was a mistake.`,
+        })
+        .then(async (result) => {
+          /* Read more about isConfirmed, isDenied below */
 
-    deleteItemConfirm() {},
+          if (result.isConfirmed) {
+            selected.forEach(async ({ id }) => {
+              const data = await this.$store.dispatch("deleteCustomer", id);
+              if (data.error) {
+                this.$swal.toast.error(data.message, { icon: true });
+              }
+            });
+          } else if (result.isDenied) {
+            this.$swal.fire(
+              "Changes are not saved!",
+              "Selected accounts weren't deleted!",
+              "error"
+            );
+          }
+        });
+    },
+    async insertItem() {
+      this.isEdit = false;
+      try {
+        const file = this.uploadFile;
+        let myData = new FormData();
+        myData.append("file", file);
+        this.application.loading = true;
+        const { data } = await this.$axios({
+          method: "post",
+          url: "/upload",
+          headers: { "Content-Type": "multipart/form-data" },
+          data: myData,
+        });
 
-    close() {},
+        console.warn("picture uploaded", data);
 
-    closeDelete() {},
-    save() {},
+        const preview = data.preview;
+
+        this.editedItem.image = preview;
+
+        const params = {
+          store: this.editedItem.store,
+          image: this.editedItem.image,
+          first_name: this.editedItem.first_name,
+          last_name: this.editedItem.last_name,
+          phone: this.editedItem.phone,
+          visit: this.editedItem.visit,
+          reward: this.editedItem.reward,
+        };
+
+        console.log("request params", params);
+
+        this.$store.dispatch("insertCustomer", params).then((data) => {
+          this.$swal.fire({
+            title: data.title,
+            text: data.message,
+            icon: data.error ? "error" : "success",
+            timer: 1500,
+          });
+          this.dialog = false;
+          this.editedItem = this.defaultItem;
+          this.uploadFile = null;
+        });
+      } catch (e) {
+        this.$swal("Internal Server Error", e.message, "error");
+        this.dialog = false;
+        this.editedItem = this.defaultItem;
+        this.uploadFile = null;
+      }
+    },
   },
 };
 </script>
