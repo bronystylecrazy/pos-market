@@ -237,11 +237,11 @@ te<template>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-btn fab x-small color="teal" dark>
-        <v-icon @click="editItem(item)"> mdi-pencil </v-icon>
+      <v-btn fab x-small color="teal" dark @click="editItem(item)">
+        <v-icon> mdi-pencil </v-icon>
       </v-btn>
-      <v-btn fab x-small color="red" dark>
-        <v-icon @click="deleteItem(item)"> mdi-delete </v-icon>
+      <v-btn fab x-small color="red" dark @click="deleteItem(item)">
+        <v-icon> mdi-delete </v-icon>
       </v-btn>
     </template>
     <!-- <template v-slot:no-data>

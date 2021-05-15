@@ -20,16 +20,14 @@
 - [x] Login, Register, and Logout pages
 
 *Backend(with realtime database if possible)*
-- [ ] Login & Register, Logout
-- [ ] User Accounts and permissions.
-- [ ] Customer purchase history
-- [ ] Customer management
+- [x] Login & Register, Logout
+- [x] User Accounts and permissions.
+- [x] Customer purchase history
+- [x] Customer management
  Insert,Fetch,Update, and Delete Customer.
-- [ ] Product management
+- [x] Product management
  Insert,Fetch,Update, and Delete Product.
-
+- [x] Realtime update
  ---
- *Pictures*
- **Login page**
- ![](work-logs/login.jpg)
+
  Made with ❤️ by Sirawit Pratoomsuwan
