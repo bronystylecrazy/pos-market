@@ -210,8 +210,20 @@ export default {
   },
   methods: {
     cast() {
+      let payload = this.toBinary(
+        JSON.stringify([
+          ...this.serializeCheckout.map(({ id, stock, buy }) => ({
+            id,
+            stock,
+            buy,
+          })),
+        ])
+      );
       window.open(
-        `/monitor?trans_id=${this.$route.query.trans_id || "Unknown"}`,
+        `/monitor?${qs.stringify({
+          trans_id: this.$route.query.trans_id || "Unknown",
+          payload,
+        })}`,
         "_blank"
       );
     },
@@ -242,6 +254,7 @@ export default {
       this.checkout.carts = deletedItems;
       var after = this.checkout.carts.length;
       this.products.find((p) => p.id === item.id).stock += before - after;
+
       let payload = this.toBinary(
         JSON.stringify([
           ...this.serializeCheckout.map(({ id, stock, buy }) => ({

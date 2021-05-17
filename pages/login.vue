@@ -74,6 +74,7 @@
                 prominent
                 type="error"
                 v-if="!!$route.query.error_message && showError"
+                width="100%"
               >
                 <v-row align="center">
                   <v-col class="grow">
@@ -168,7 +169,7 @@ export default {
   computed: {
     ...mapFields(["members", "auth"]),
   },
-  created() {
+  mounted() {
     this.auth.isLoggedIn = false;
     this.auth.user = schema;
     localStorage.clear();

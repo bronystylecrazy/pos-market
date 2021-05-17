@@ -226,7 +226,7 @@ export default {
       return this.roles.map((r) => r.name.trim());
     },
   },
-  created() {
+  mounted() {
     this.auth.isLoggedIn = false;
     this.auth.user = schema;
     localStorage.clear();

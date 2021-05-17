@@ -45,7 +45,7 @@ export default {
   computed: {
     ...mapFields(["products", "header", "application"]),
   },
-  async created() {
+  async mounted() {
     this.header = "Dashboard";
     this.application.appbar = false;
     this.application.loading = true;

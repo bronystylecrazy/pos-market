@@ -39,7 +39,7 @@ export default {
       "application",
     ]),
   },
-  async created() {
+  async mounted() {
     this.header = "Checkout";
     if (typeof this.$route.query.trans_id === "undefined") {
       this.$router.push(`/checkout?${qs.stringify({ trans_id: nanoid(21) })}`);
@@ -48,9 +48,6 @@ export default {
       trans_id: this.$route.query.trans_id,
     })})}`;
     this.application.appbar = false;
-    this.application.loading = true;
-    await this.$store.dispatch("fetch");
-    this.application.loading = false;
   },
 };
 </script>

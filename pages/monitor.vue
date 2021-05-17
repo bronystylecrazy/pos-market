@@ -7,7 +7,7 @@
 <script>
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-
+import qs from "qs";
 import { mapFields } from "vuex-map-fields";
 
 export default {
@@ -36,9 +36,24 @@ export default {
         .filter((p) => !!p.id);
     },
   },
-  async created() {
+  async mounted() {
     this.header = "Monitor";
-    this.header = "Manage Member";
+    if (typeof this.$route.query.payload !== "undefined") {
+      const decodedPayload = this.fromBinary(this.$route.query.payload);
+      try {
+        const carts = JSON.parse(decodedPayload);
+        console.log(carts);
+        this.checkout.monitorCarts = carts;
+      } catch (e) {
+        this.$swal({
+          title: "Fatal Error!",
+          text: "Couldn't get data from checkout page!",
+          timer: 2500,
+          icon: "error",
+        });
+      }
+    }
+
     this.application.appbar = true;
     this.application.loading = true;
     await this.$store.dispatch("fetch");
@@ -69,14 +84,21 @@ export default {
           this.application.websocket = true;
 
           this.stompClient.subscribe("/topic/monitor", (tick) => {
-            const decodedPayload = this.fromBinary(
-              JSON.parse(tick.body).payload
-            );
             const transactionID = JSON.parse(tick.body).transactionID;
             if (transactionID !== (this.$route.query.trans_id || "Unknown"))
               return;
+
+            const decodedPayload = this.fromBinary(
+              JSON.parse(tick.body).payload
+            );
             const carts = JSON.parse(decodedPayload);
             console.log(carts);
+            this.$router.push(
+              `/monitor?${qs.stringify({
+                trans_id: this.$route.query.trans_id,
+                payload: JSON.parse(tick.body).payload,
+              })}`
+            );
             this.checkout.monitorCarts = carts;
           });
 

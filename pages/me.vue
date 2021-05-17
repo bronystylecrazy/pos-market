@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapFields(["application"]),
   },
-  async created() {
+  async mounted() {
     this.application.appbar = true;
     this.$store.commit("SET_APPLICATION_LOADING", true);
     await this.$store.dispatch("fetchProfile");

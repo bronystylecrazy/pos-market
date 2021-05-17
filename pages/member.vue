@@ -14,7 +14,7 @@ export default {
   computed: {
     ...mapFields(["products", "header", "application"]),
   },
-  async created() {
+  async mounted() {
     this.header = "Manage Member";
     this.application.appbar = true;
     this.application.loading = true;
