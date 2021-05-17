@@ -63,18 +63,11 @@
         </div>
       </v-list-item-content>
     </v-list-item>
-    <!-- <v-card-actions>
-      <v-btn x-small fab color="primary" elevation="2"
-        ><v-icon>mdi-cog</v-icon></v-btn
-      >
-      <v-spacer></v-spacer>
-      <v-btn x-small fab color="primary" elevation="2" @click="product"
-        ><v-icon>mdi-minus</v-icon></v-btn
-      >
-      <v-btn x-small fab color="primary" elevation="2"
-        ><v-icon>mdi-plus</v-icon></v-btn
-      >
-    </v-card-actions> -->
+    <v-fade-transition>
+      <v-overlay v-if="application.loading" absolute>
+        <v-progress-circular indeterminate size="32"></v-progress-circular>
+      </v-overlay>
+    </v-fade-transition>
     <v-dialog
       v-model="dialog"
       persistent

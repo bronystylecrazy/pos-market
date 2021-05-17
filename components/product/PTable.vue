@@ -22,7 +22,7 @@
             If you want more product, please insert it to your system :).
           </v-col>
           <v-col class="shrink">
-            <v-btn @click="dialog = true"
+            <v-btn @click="dialog = true" :loading="application.loading"
               ><v-icon left>mdi-cube-send</v-icon>Insert product</v-btn
             >
           </v-col>

@@ -59,6 +59,9 @@
         </v-row>
       </v-alert>
     </v-flex>
+    <v-overlay :value="this.application.loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-layout>
 </template>
 
@@ -83,7 +86,6 @@ export default {
     ...mapGetters(["serializeCheckout"]),
     filteredProducts() {
       if (this.checkout.category === 0) return this.products;
-
       return this.products.filter((p) => {
         return p.category.startsWith(
           this.categories[this.checkout.category - 1].name

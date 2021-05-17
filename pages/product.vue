@@ -1,17 +1,6 @@
 <template>
   <div>
-    <!-- <v-tabs
-      dark
-      show-arrows
-      v-model="tab"
-      style="border-radius: 5px 5px 0px 0px; background: rgb(29, 34, 40)"
-    >
-      <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
-      <v-tab v-for="category in categories" :key="category">{{
-        category.name
-      }}</v-tab>
-    </v-tabs> -->
-    <Hello :tab="tab" />
+    <PTable :tab="tab" />
   </div>
 </template>
 
@@ -22,7 +11,7 @@ export default {
   middleware: ["auth"],
   transition: "slide-bottom",
   components: {
-    Hello: () => import("~/components/product/PTable"),
+    PTable: () => import("~/components/product/PTable"),
   },
   computed: {
     ...mapFields([

@@ -225,7 +225,7 @@ te<template>
                   color="blue darken-1"
                   text
                   @click="
-                    !isEdit ? insertItem() : updateItem(editItem, isWithImage)
+                    !isEdit ? insertItem() : updateItem(item, isWithImage)
                   "
                 >
                   Save
@@ -358,6 +358,7 @@ export default {
       console.log("editItem", item);
     },
     async updateItem(item, image = true) {
+      console.log(item);
       try {
         if (image) {
           const file = this.editedItem.file;

@@ -1,5 +1,5 @@
 <template>
-  <div><PTable /></div>
+  <v-card><PTable /></v-card>
 </template>
 
 <script>

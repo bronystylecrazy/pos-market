@@ -20,6 +20,7 @@ export default {
       }).join(''));
     },
     connect() {
+      if (this.stompClient !== null) this.stompClient.disconnect();
       this.socket = new SockJS("http://localhost:8080/gs-guide-websocket");
       this.stompClient = Stomp.over(this.socket);
 
@@ -109,6 +110,9 @@ export default {
   },
   created() {
     this.$vuetify.theme.dark = false;
-    this.connect();
+
   },
+  mounted() {
+    this.connect();
+  }
 }

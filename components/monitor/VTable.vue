@@ -11,7 +11,7 @@
       <h2 class="mt-5">{{ items.reduce((c, r) => c + r.buy, 0) }} item(s)</h2>
     </v-flex>
     <v-simple-table
-      style="width: 100%"
+      style="width: 100%; z-index: 5000"
       dense
       class="cshadow mt-4"
       :loading="true"
