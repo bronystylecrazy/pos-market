@@ -1,5 +1,5 @@
 <template>
-  <v-card><PTable /> </v-card>
+  <v-card :loading="application.loading"><PTable /> </v-card>
 </template>
 
 <script>

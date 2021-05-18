@@ -143,6 +143,8 @@ export default {
           this.auth.user = data.response;
           this.auth.access_token = data.meta.access_token;
           this.auth.isLoggedIn = true;
+          this.auth.username = data.meta.username;
+          this.auth.token_id = data.meta.token_id;
           console.log(data);
           console.log(this.auth);
         }
@@ -169,9 +171,9 @@ export default {
   computed: {
     ...mapFields(["members", "auth"]),
   },
-  mounted() {
+  created() {
     this.auth.isLoggedIn = false;
-    this.auth.user = schema;
+    this.auth.user = {};
     localStorage.clear();
     this.error_message = this.$route.query.error_message;
 

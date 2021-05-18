@@ -5,20 +5,24 @@
     permanent
     expand-on-hover
     color="rgb(29, 34, 40)"
+    style="transition: all 0.25s ease-in-out"
   >
     <v-list>
-      <v-list-item class="px-2">
-        <v-list-item-avatar>
-          <v-img :src="`${auth.user.image}`"></v-img>
-        </v-list-item-avatar>
-      </v-list-item>
-
-      <v-list-item link>
+      <v-list-item>
+        <v-list-item-avatar style="padding-top: 10px">
+          <v-avatar>
+            <v-img :size="32" :src="`${auth.user.image}`"></v-img> </v-avatar
+        ></v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="title">
-            {{ auth.user.first_name }} {{ auth.user.last_name }}
+            {{ auth.username }}
+            <!-- {{ auth.user.first_name }} {{ auth.user.last_name }} -->
           </v-list-item-title>
-          <v-list-item-subtitle>{{ auth.user.roles }}</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            <v-chip label x-small>
+              {{ auth.user.roles }}
+            </v-chip>
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -33,9 +37,22 @@
         :class="`custom-${menu.color}`"
         :key="menu.title + menu.to"
       >
-        <v-list-item-icon
-          ><v-icon>{{ menu.icon }}</v-icon></v-list-item-icon
-        >
+        <v-list-item-icon>
+          <template v-if="badges[menu.to] != undefined && badges[menu.to] > 0">
+            <v-badge
+              color="red"
+              dot
+              offset-x="0"
+              offset-y="0"
+              :content="badges[menu.to].toString()"
+            >
+              <v-icon>{{ menu.icon }}</v-icon>
+            </v-badge>
+          </template>
+          <template v-else>
+            <v-icon>{{ menu.icon }}</v-icon>
+          </template>
+        </v-list-item-icon>
         <v-list-item-title class="font-weight-bold">{{
           menu.title
         }}</v-list-item-title>
@@ -105,14 +122,11 @@ export default {
     };
   },
   computed: {
-    ...mapFields(["auth"]),
+    ...mapFields(["auth", "realtime.badges"]),
   },
   methods: {
     logout() {
-      this.auth.isLoggedIn = false;
-      this.auth.user = {};
-      localStorage.clear();
-      this.$router.push("/login");
+      this.$store.commit("LOGOUT");
     },
   },
 };

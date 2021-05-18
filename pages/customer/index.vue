@@ -1,5 +1,5 @@
 <template>
-  <v-card><PTable /></v-card>
+  <v-card :loading="application.loading"><PTable /></v-card>
 </template>
 
 <script>
@@ -21,8 +21,10 @@ export default {
     this.header = "Manage Customer";
     this.application.appbar = true;
     this.application.loading = true;
-    await this.$store.dispatch("fetch");
-    this.application.loading = false;
+    setTimeout(async () => {
+      await this.$store.dispatch("fetch");
+      this.application.loading = false;
+    }, 1000);
   },
 };
 </script>

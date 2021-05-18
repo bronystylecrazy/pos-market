@@ -36,6 +36,7 @@ export default {
               this.application.loading = true;
               await this.$store.dispatch("fetchCustomer", this.$store.dispatch("fetchOverview"));
               this.application.loading = false;
+              this.badges["/customer"] = (this.badges["/customer"] || 0) + 1;
               this.$toast("Customer updated!", {
                 timeout: 3500,
                 icon: true,
@@ -51,6 +52,7 @@ export default {
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchMember"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
+              this.badges["/member"] = (this.badges["/member"] || 0) + 1;
               this.$toast("Member updated!", {
                 timeout: 3500,
                 icon: true,
@@ -66,6 +68,7 @@ export default {
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchProduct"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
+              this.badges["/product"] = (this.badges["/product"] || 0) + 1;
               this.$toast("Product updated!", {
                 timeout: 3500,
                 icon: true,
@@ -82,6 +85,7 @@ export default {
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchProfile")]);
               this.application.loading = false;
+              this.badges["/profile"] = (this.badges["/profile"] || 0) + 1;
               this.$toast("Profile updated!", {
                 timeout: 3500,
                 icon: true,
@@ -95,6 +99,10 @@ export default {
             console.log(carts)
             this.checkout.monitorCarts = carts;
           });
+
+          this.stompClient.subscribe("/topic/authstate", (tick) => {
+            this.$store.dispatch('fetchOnline');
+          });
         },
         (error) => {
           console.log(error);
@@ -106,7 +114,7 @@ export default {
     },
   },
   computed: {
-    ...mapFields(["application", "auth", "checkout", "realtime.socket", "realtime.stompClient"]),
+    ...mapFields(["application", "auth", "checkout", "realtime.socket", "realtime.stompClient", "realtime.badges"]),
   },
   created() {
     this.$vuetify.theme.dark = false;

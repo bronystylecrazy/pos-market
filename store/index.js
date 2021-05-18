@@ -18,7 +18,7 @@ const ls = new SecureLS({
 
 const vuexPersistent = createPersistedState({
   key: "fakestore",
-  paths: ["auth", "application.setting"],
+  paths: ["auth", "application.setting", "realtime.badges"],
   fetchBeforeUse: true,
   storage: {
     getItem: (key) => ls.get(key),
@@ -63,7 +63,9 @@ const createStore = () => new Vuex.Store({
 
       },
       isLoggedIn: false,
-      access_token: ""
+      access_token: "",
+      username: "",
+      token_id: ""
     },
     application: {
       loading: true,
@@ -77,6 +79,12 @@ const createStore = () => new Vuex.Store({
     realtime: {
       socket: null,
       stompClient: null,
+      badges: {
+        "/customer": 0,
+        "/member": 0,
+        "/product": 0,
+      },
+      online: {}
     }
   },
   getters: {
@@ -130,10 +138,18 @@ const createStore = () => new Vuex.Store({
       state.roles = roles;
     },
     LOGOUT(state, qs) {
-      localStorage.clear();
-      state.auth.isLoggedIn = false;
-      state.auth.user = {};
-      this.$router.push(`/login${typeof qs === "undefined" ? "" : "?"+qs}`);
+      this.$axios.post(`/account/${state.auth.token_id}/logout?token=${state.auth.access_token}`).then(({
+        data
+      }) => {
+        if (data.error) return;
+        localStorage.clear();
+        state.auth.isLoggedIn = false;
+        state.auth.user = {};
+        this.$router.push(`/login${typeof qs === "undefined" ? "" : "?"+qs}`);
+      });
+    },
+    SET_ONLINE(state, status) {
+      state.realtime.online = status;
     }
   },
   actions: {
@@ -147,6 +163,16 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.post(`/account/login?${qs.stringify(params)}`);
+      return data;
+    },
+    async fetchOnline({
+      state,
+      commit
+    }) {
+      const {
+        data
+      } = await this.$axios.get(`/account/status?token=${state.auth.access_token}`);
+      commit("SET_ONLINE", data.response || {});
       return data;
     },
     async deleteAccount(app, uid) {
@@ -270,6 +296,7 @@ const createStore = () => new Vuex.Store({
         dispatch("fetchProduct"),
         dispatch("fetchCategory"),
         dispatch("fetchRole"),
+        dispatch("fetchOnline"),
         dispatch("fetchOverview")
       ]);
       console.log("Done fetching all.");

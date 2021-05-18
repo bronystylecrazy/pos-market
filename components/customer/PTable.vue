@@ -6,59 +6,55 @@ te<template>
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
     show-select
     :search="search"
-    :loading="application.loading"
     loading-text="Loading... Please wait"
   >
     <template #item.id="{ item }">
       <b>{{ item.id }}</b>
     </template>
     <template #item.name="{ item }">
-      <v-chip label pill>
-        <v-avatar left>
-          <v-img>
-            <img :src="item.image" />
-          </v-img>
+      <v-chip label pill style="width: 100%">
+        <v-avatar left size="24">
+          <v-img :src="item.image"> </v-img>
         </v-avatar>
-        <b>{{ item.first_name }} {{ item.last_name }}</b></v-chip
-      >
+        <b>{{ item.first_name }} {{ item.last_name }}</b>
+      </v-chip>
     </template>
     <template #item.customerID="{ item }">
-      <v-chip label class="mr-2">
+      <v-chip label class="mr-2" style="width: 100%">
         <v-icon left> mdi-barcode </v-icon>
         <b>{{ item.customerID }}</b>
       </v-chip>
     </template>
     <template #item.phone="{ item }">
-      <v-chip label class="mr-2">
+      <v-chip label class="mr-2" style="width: 100%">
         <v-icon left> mdi-card-account-phone </v-icon>
-        {{ item.phone | VMask("###-###-####") }}
+        <b>{{ item.phone | VMask("###-###-####") }}</b>
       </v-chip>
     </template>
-
     <template #item.visit="{ item }">
-      <v-chip>
+      <v-chip label style="width: 100%">
         <v-icon left>mdi-poll-box</v-icon>
-        {{ item.visit }}</v-chip
+        <b>{{ item.visit }}</b></v-chip
       >
     </template>
     <template #item.store="{ item }">
-      <v-chip>
+      <v-chip label style="width: 100%">
         <v-icon left>mdi-store</v-icon>
-        {{ item.store }}</v-chip
+        <b>{{ item.store }}</b></v-chip
       >
     </template>
     <template #item.reward="{ item }">
-      <v-chip>
+      <v-chip label style="width: 100%">
         <v-icon left>mdi-medal</v-icon>
-        {{ item.reward }}</v-chip
+        <b>{{ item.reward }}</b></v-chip
       >
     </template>
     <template #item.iat="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-chip label v-bind="attrs" v-on="on">
+          <v-chip label v-bind="attrs" v-on="on" style="width: 100%">
             <v-icon left>mdi-clock-alert</v-icon>
-            {{ $moment(new Date(item.iat)).fromNow() }}</v-chip
+            <b>{{ $moment(new Date(item.iat)).fromNow() }}</b></v-chip
           >
         </template>
         <span>{{ new Date(item.iat) }}</span>
@@ -67,9 +63,16 @@ te<template>
     <template #item.uat="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-chip label v-bind="attrs" v-on="on">
+          <v-chip
+            label
+            color="orange lighten-3"
+            v-bind="attrs"
+            dark
+            v-on="on"
+            style="width: 100%"
+          >
             <v-icon left>mdi-clock-check</v-icon
-            >{{ $moment(new Date(item.uat)).fromNow() }}</v-chip
+            ><b>{{ $moment(new Date(item.uat)).fromNow() }}</b></v-chip
           >
         </template>
         <span>{{ new Date(item.uat) }}</span>
@@ -89,6 +92,7 @@ te<template>
           label="Search"
           single-line
           hide-details
+          :disabled="application.loading"
         ></v-text-field>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="680px">
@@ -99,6 +103,7 @@ te<template>
               class="mb-2 ml-4"
               v-bind="attrs"
               v-on="on"
+              :loading="application.loading"
             >
               <v-icon left>mdi-notebook-edit-outline</v-icon> New Customer
             </v-btn>
@@ -218,14 +223,14 @@ te<template>
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close()">
+                <v-btn color="blue darken-1" text @click="close">
                   Cancel
                 </v-btn>
                 <v-btn
                   color="blue darken-1"
                   text
                   @click="
-                    !isEdit ? insertItem() : updateItem(item, isWithImage)
+                    !isEdit ? insertItem() : updateItem(editedItem, isWithImage)
                   "
                 >
                   Save
@@ -237,10 +242,34 @@ te<template>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-btn fab x-small color="teal" dark @click="editItem(item)">
+      <v-btn
+        fab
+        x-small
+        color="teal"
+        :dark="!application.loading"
+        @click="editItem(item)"
+        :disabled="application.loading"
+      >
         <v-icon> mdi-pencil </v-icon>
       </v-btn>
-      <v-btn fab x-small color="red" dark @click="deleteItem(item)">
+      <v-btn
+        fab
+        x-small
+        color="warning"
+        :dark="!application.loading"
+        @click="$router.push(`/customer/${item.id}`)"
+        :disabled="application.loading"
+      >
+        <v-icon> mdi-eye </v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        x-small
+        color="red"
+        :dark="!application.loading"
+        @click="deleteItem(item)"
+        :disabled="application.loading"
+      >
         <v-icon> mdi-delete </v-icon>
       </v-btn>
     </template>
@@ -261,43 +290,7 @@ export default {
     search: "",
     dialog: false,
     dialogDelete: false,
-    headers: [
-      {
-        text: "#ID",
-        value: "id",
-        align: "left",
-        sortable: true,
-        width: "4%",
-      },
-      {
-        text: "#Customer ID",
-        value: "customerID",
-        align: "left",
-        sortable: true,
-        width: "10%",
-      },
-      // {
-      //   text: "Picture",
-      //   value: "image",
-      //   align: "center",
-      //   sortable: false,
-      //   width: "4%",
-      // },
-      {
-        text: "Firstname-Lastname",
-        align: "start",
-        sortable: true,
-        value: "name",
-        width: "20%",
-      },
-      { text: "Phone", value: "phone", sortable: true },
-      { text: "visit", value: "visit", sortable: true },
-      { text: "reward", value: "reward", sortable: true },
-      { text: "store", value: "store", sortable: true },
-      { text: "Created at", value: "iat", align: "left", sortable: true },
-      { text: "Updated at", value: "uat", align: "left", sortable: true },
-      { text: "Actions", value: "actions", sortable: false },
-    ],
+
     isEdit: false,
     editedItem: {
       first_name: "",
@@ -307,6 +300,7 @@ export default {
       reward: 0,
       store: 0,
       visit: 0,
+      id: -1,
     },
     defaultItem: {
       first_name: "",
@@ -316,6 +310,7 @@ export default {
       reward: 0,
       store: 0,
       visit: 0,
+      id: -1,
     },
     uploadFile: null,
     isWithImage: false,
@@ -333,6 +328,60 @@ export default {
     ]),
     filteredCustomers() {
       return this.customers;
+    },
+    headers() {
+      return [
+        {
+          text: "#ID",
+          value: "id",
+          align: "left",
+          sortable: true,
+          width: "4%",
+        },
+        ...(this.$vuetify.breakpoint.width >= 1337
+          ? [
+              {
+                text: "#Customer ID",
+                value: "customerID",
+                align: "left",
+                sortable: true,
+                width: "10%",
+              },
+            ]
+          : []),
+        {
+          text: "Firstname-Lastname",
+          align: "start",
+          sortable: true,
+          value: "name",
+          width: "20%",
+        },
+        { text: "Phone", value: "phone", sortable: true },
+        { text: "visit", value: "visit", sortable: true },
+        { text: "reward", value: "reward", sortable: true },
+        { text: "store", value: "store", sortable: true },
+        ...(this.$vuetify.breakpoint.width >= 1337
+          ? [
+              // {
+              //   text: "Created at",
+              //   value: "iat",
+              //   align: "left",
+              //   sortable: true,
+              // },
+              {
+                text: "Updated at",
+                value: "uat",
+                align: "left",
+                sortable: true,
+              },
+              {
+                text: "Actions",
+                value: "actions",
+                sortable: false,
+              },
+            ]
+          : [{ text: "Actions", value: "actions", sortable: false }]),
+      ];
     },
   },
 
@@ -355,7 +404,7 @@ export default {
       this.editedItem.reward = item.reward;
       this.editedItem.store = item.store;
       this.editedItem.visit = item.visit;
-      console.log("editItem", item);
+      (this.editedItem.id = item.id), console.log("editItem", item);
     },
     async updateItem(item, image = true) {
       console.log(item);

@@ -7,30 +7,36 @@
     style="box-shadow: 0 0 1px 0 rgb(0 0 0 / 10%)"
     show-select
     :search="search"
-    :loading="application.loading"
   >
     <template #item.id="{ item }">
       <b>{{ item.uid }}</b>
     </template>
-    <template #item.status="{ item }">
-      <v-chip label color="teal" dark v-if="item.status == 1"
+    <template #item.status="{ item }" class="py-10">
+      <v-chip width="100%" label color="teal" dark v-if="checkOnline(item)"
         ><v-icon left>mdi-access-point</v-icon> <b>Online</b></v-chip
-      >
-      <v-chip label color="warning" v-else-if="item.status == -1"
-        ><v-icon left>mdi-access-point-remove</v-icon> <b>Away</b></v-chip
       >
       <v-chip label v-else
         ><v-icon left>mdi-access-point-off</v-icon> <b>Offline</b></v-chip
       >
     </template>
     <template #item.name="{ item }">
-      <b>{{ item.first_name }} {{ item.last_name }}</b>
+      <v-chip label pill style="width: 100%">
+        <v-avatar left size="24">
+          <v-img :src="item.image"> </v-img>
+        </v-avatar>
+        <b>{{ item.first_name }} {{ item.last_name }}</b>
+      </v-chip>
     </template>
     <template #item.memid="{ item }">
-      <b>{{ item.memid }}</b>
+      <v-chip label pill style="width: 100%">
+        <b>{{ item.memid }}</b>
+      </v-chip>
     </template>
     <template #item.phone="{ item }">
-      <b>{{ item.phone | VMask("###-###-####") }}</b>
+      <v-chip label pill style="width: 100%">
+        <v-icon left>mdi-card-account-phone</v-icon>
+        <b>{{ item.phone | VMask("###-###-####") }}</b>
+      </v-chip>
     </template>
     <template #item.roles="{ item }">
       <!-- <v-chip dark color="red" class="font-weight-bold">{{
@@ -38,9 +44,8 @@
       }}</v-chip> -->
       <v-select
         :items="filteredRoles"
-        label="Role"
         :value="item.roles"
-        :disabled="filteredRoles.length <= 1"
+        :disabled="filteredRoles.length <= 1 || application.loading"
         @change="
           update(item, {
             roles: $event,
@@ -49,19 +54,18 @@
         :loading="application.loading"
       ></v-select>
     </template>
-    <template #item.iat="{ item }">
+    <template #item.uat="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-chip label color="teal accent-4" dark v-bind="attrs" v-on="on">
-            <v-icon left>mdi-clock</v-icon
-            ><b>{{ $moment(new Date(item.iat)).fromNow() }}</b></v-chip
+          <v-chip
+            label
+            color="orange lighten-3"
+            dark
+            v-bind="attrs"
+            v-on="on"
+            pill
+            width="100%"
           >
-        </template>
-        <span>{{ new Date(item.iat) }}</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-chip label color="orange lighten-3" dark v-bind="attrs" v-on="on">
             <v-icon left>mdi-clock</v-icon
             ><b>{{ $moment(new Date(item.uat)).fromNow() }}</b></v-chip
           >
@@ -70,7 +74,10 @@
       </v-tooltip>
     </template>
     <template #item.email="{ item }">
-      <b>{{ item.email }}</b>
+      <v-chip label pill style="width: 100%">
+        <v-icon left>mdi-email</v-icon>
+        <b>{{ item.email }}</b>
+      </v-chip>
     </template>
     <template #item.image="{ item }" style="width: 20%">
       <v-avatar color="primary" size="32">
@@ -82,16 +89,16 @@
       <v-toolbar flat>
         <v-toolbar-title>Manage Member</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
-
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
           label="Search"
           single-line
           hide-details
+          :disabled="application.loading"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="680px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -116,7 +123,11 @@
             </v-btn>
           </template>
 
-          <v-card height="100%" style="overflow: hidden">
+          <v-card
+            height="100%"
+            style="overflow: hidden"
+            :loading="application.loading"
+          >
             <v-card-title>
               <span class="headline"
                 ><v-icon left>mdi-account-edit</v-icon>{{ formTitle }}</span
@@ -132,6 +143,7 @@
                       v-model="editedItem.username"
                       label="Username"
                       prepend-inner-icon="mdi-account-box"
+                      :disabled="application.loading"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="6" sm="12" md="6">
@@ -140,6 +152,7 @@
                       label="Password"
                       type="password"
                       prepend-inner-icon="mdi-shield-key"
+                      :disabled="application.loading"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
@@ -147,6 +160,7 @@
                       v-model="editedItem.roles"
                       :items="filteredRoles"
                       label="Role"
+                      :disabled="application.loading"
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -154,14 +168,19 @@
             </v-card-text>
             <v-card-actions class="pb-5">
               <v-spacer></v-spacer>
-
-              <v-btn color="blue darken-1" dark @click="reveal = true">
+              <v-btn
+                color="blue darken-1"
+                dark
+                @click="reveal = true"
+                :loading="application.loading"
+              >
                 <v-icon left>mdi-arrow-right-bold</v-icon> Next step
               </v-btn>
               <v-btn
                 color="blue darken-1"
                 text
                 @click="reveal = dialog = false"
+                :loading="application.loading"
               >
                 <!-- <v-icon left>mdi-arrow-right-bold</v-icon> -->
                 Cancel
@@ -172,6 +191,7 @@
                 v-if="reveal"
                 class="transition-fast-in-fast-out v-card--reveal"
                 style="height: 100%"
+                :loading="application.loading"
               >
                 <v-card-text class="pb-0">
                   <v-row>
@@ -179,12 +199,14 @@
                       <v-text-field
                         v-model="editedItem.first_name"
                         label="First Name"
+                        :disabled="application.loading"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6" sm="12" md="6">
                       <v-text-field
                         v-model="editedItem.last_name"
                         label="Last Name"
+                        :disabled="application.loading"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6" sm="6" md="6">
@@ -192,6 +214,7 @@
                         v-model="editedItem.phone"
                         label="Phone Number"
                         v-mask="'###-###-####'"
+                        :disabled="application.loading"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6" sm="6" md="6">
@@ -199,6 +222,7 @@
                         v-model="editedItem.email"
                         label="Email"
                         type="email"
+                        :disabled="application.loading"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="6" sm="6" md="6">
@@ -206,6 +230,7 @@
                         v-model="editedItem.gender"
                         :items="['Not Mentioned', 'Male', 'Female']"
                         label="Gender"
+                        :disabled="application.loading"
                       ></v-select>
                     </v-col>
                     <v-col cols="6" sm="6" md="6">
@@ -217,20 +242,37 @@
                         label="Upload the product image"
                         accept="image/png, image/jpeg, image/bmp"
                         v-model="editedItem.file"
+                        :disabled="application.loading"
                       ></v-file-input> </v-col
                   ></v-row>
                 </v-card-text>
                 <v-card-actions class="pb-5">
-                  <v-btn text color="primary" @click="reveal = false">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="reveal = false"
+                    :loading="application.loading"
+                  >
                     <v-icon left>mdi-arrow-left-bold</v-icon>
                     Previous step
                   </v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn color="teal" dark @click="insert()">
+                  <v-btn
+                    color="teal"
+                    dark
+                    @click="insert()"
+                    :loading="application.loading"
+                  >
                     <v-icon left>mdi-content-save</v-icon>
                     Save
                   </v-btn>
-                  <v-btn text @click="reveal = dialog = false"> Calcel </v-btn>
+                  <v-btn
+                    text
+                    @click="reveal = dialog = false"
+                    :loading="application.loading"
+                  >
+                    Calcel
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-expand-transition>
@@ -240,14 +282,20 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
-        small
+        x-small
+        fab
         class="mr-2"
         @click="editItem(item)"
         :disabled="application.loading"
       >
         mdi-pencil
       </v-icon>
-      <v-icon small @click="deleteItem(item)" :disabled="application.loading">
+      <v-icon
+        fab
+        x-small
+        @click="deleteItem(item)"
+        :disabled="application.loading"
+      >
         mdi-delete
       </v-icon>
     </template>
@@ -286,28 +334,28 @@ export default {
         sortable: false,
         width: "4%",
       },
-      {
-        text: "Picture",
-        value: "image",
-        align: "center",
-        sortable: false,
-        width: "4%",
-      },
+      // {
+      //   text: "Picture",
+      //   value: "image",
+      //   align: "center",
+      //   sortable: false,
+      //   width: "4%",
+      // },
       {
         text: "Firstname-Lastname",
         align: "start",
         sortable: true,
         value: "name",
       },
+      { text: "Phone", value: "phone", sortable: true, width: "10%" },
+      { text: "Email", value: "email", sortable: true },
       {
         text: "Role",
         align: "start",
         sortable: true,
         value: "roles",
       },
-      { text: "Phone", value: "phone", sortable: true, width: "10%" },
-      { text: "Email", value: "email", sortable: true },
-      { text: "Created/Updated at", value: "iat", sortable: true },
+      { text: "Updated at", value: "uat", sortable: true },
       { text: "Actions", value: "actions", sortable: false },
     ],
     editedIndex: -1,
@@ -348,6 +396,7 @@ export default {
       "roles",
       "auth",
       "application",
+      "realtime.online",
     ]),
     filteredMembers() {
       return this.members.filter(
@@ -370,8 +419,12 @@ export default {
   created() {},
 
   methods: {
-    editItem(item) {},
-    save() {},
+    checkOnline(member) {
+      const online = { ...this.online };
+      for (var o in online) {
+        if (online[o].includes(member.memid)) return true;
+      }
+    },
     async update(item, params) {
       try {
         await this.$store.dispatch("updateAccount", { params, id: item.uid });
