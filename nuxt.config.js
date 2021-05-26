@@ -81,11 +81,18 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/recaptcha',
   ],
-
+  recaptcha: {
+    /* reCAPTCHA options */
+    siteKey: "6Ldd-cYaAAAAAIingHQ0q6cVD-EhkeeslAJ2s_PK",
+    version: 2,
+    size: 'normal'
+  },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://localhost:8080',
+
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

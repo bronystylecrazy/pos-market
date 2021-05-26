@@ -1,5 +1,6 @@
 <template>
   <v-row justify="center">
+    <APIView style="z-index: 100000" :apis="api" />
     <vue-particles
       v-if="!$vuetify.breakpoint.mobile"
       color="#fff"
@@ -70,12 +71,7 @@
                   required
                 ></v-text-field>
               </v-col>
-              <v-alert
-                prominent
-                type="error"
-                v-if="!!$route.query.error_message && showError"
-                width="100%"
-              >
+              <v-alert prominent type="error" v-if="showError" width="100%">
                 <v-row align="center">
                   <v-col class="grow">
                     {{ error_message }}
@@ -87,7 +83,7 @@
               </v-alert>
             </v-row>
           </v-container>
-
+          <!-- <recaptcha /> -->
           <small>Don't have an account? </small>
           <small
             ><a
@@ -122,6 +118,9 @@ import { fillSchema, schema } from "~/store/models/members";
 export default {
   layout: "authentication",
   middleware: ["guest"],
+  components: {
+    APIView: () => import("~/components/API/Button"),
+  },
   data: () => ({
     data: {
       username: "",
@@ -131,13 +130,17 @@ export default {
     error: false,
     loading: false,
     error_message: "",
-    showError: true,
+    showError: false,
+    api: [
+      { method: "POST", resourse: "/login", description: "Login to system" },
+    ],
   }),
   methods: {
     async handleLogIn(timer = 1500) {
       this.loading = true;
       try {
         const params = { ...this.data };
+        this.$axios.defaults.headers.common = {};
         const data = await this.$store.dispatch("login", params);
         if (!data.error) {
           this.auth.user = data.response;
@@ -145,8 +148,10 @@ export default {
           this.auth.isLoggedIn = true;
           this.auth.username = data.meta.username;
           this.auth.token_id = data.meta.token_id;
-          console.log(data);
-          console.log(this.auth);
+          if (this.$store.state.application.setting.console_log) {
+            console.log(data);
+            console.log(this.auth);
+          }
         }
 
         this.$swal({
@@ -171,16 +176,18 @@ export default {
   computed: {
     ...mapFields(["members", "auth"]),
   },
-  created() {
+  mounted() {
     this.auth.isLoggedIn = false;
     this.auth.user = {};
     localStorage.clear();
     this.error_message = this.$route.query.error_message;
+    if (!!this.error_message) this.showError = true;
 
     if (!!this.$route.query.pwd) {
       try {
         const data = JSON.parse(atob(this.$route.query.pwd));
-        console.log(data);
+        if (this.$store.state.application.setting.console_log)
+          console.log(data);
         this.data.username = data.username;
         this.data.password = data.password;
         this.handleLogIn(500);

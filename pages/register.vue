@@ -133,7 +133,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-select
-                    label="Role*"
+                    label="Gender*"
                     :items="['Not Mentioned', 'Male', 'Female']"
                     v-model="data.gender"
                     required

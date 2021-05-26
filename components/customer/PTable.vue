@@ -13,7 +13,7 @@ te<template>
     </template>
     <template #item.name="{ item }">
       <v-chip label pill style="width: 100%">
-        <v-avatar left size="24">
+        <v-avatar left size="24" style="transform: scale(0.8)">
           <v-img :src="item.image"> </v-img>
         </v-avatar>
         <b>{{ item.first_name }} {{ item.last_name }}</b>
@@ -407,7 +407,7 @@ export default {
       (this.editedItem.id = item.id), console.log("editItem", item);
     },
     async updateItem(item, image = true) {
-      console.log(item);
+      if (this.$store.state.application.setting.console_log) console.log(item);
       try {
         if (image) {
           const file = this.editedItem.file;
@@ -436,8 +436,8 @@ export default {
             visit: this.editedItem.visit,
             reward: this.editedItem.reward,
           };
-
-          console.log("request params", params);
+          if (this.$store.state.application.setting.console_log)
+            console.log("request params", params);
           this.$store
             .dispatch("updateCustomer", { params, id: item.id })
             .then((data) => {
@@ -459,8 +459,8 @@ export default {
             visit: this.editedItem.visit,
             reward: this.editedItem.reward,
           };
-
-          console.log("request params", params);
+          if (this.$store.state.application.setting.console_log)
+            console.log("request params", params);
           this.$store
             .dispatch("updateCustomer", { params, id: item.id })
             .then((data) => {
@@ -506,7 +506,8 @@ export default {
     },
     async deleteSelected() {
       const selected = [...this.selected];
-      console.log("deletingMultiple", selected);
+      if (this.$store.state.application.setting.console_log)
+        console.log("deletingMultiple", selected);
       this.selected = [];
       this.$swal
         .fire({
@@ -566,8 +567,8 @@ export default {
           visit: this.editedItem.visit,
           reward: this.editedItem.reward,
         };
-
-        console.log("request params", params);
+        if (this.$store.state.application.setting.console_log)
+          console.log("request params", params);
 
         this.$store.dispatch("insertCustomer", params).then((data) => {
           this.$swal.fire({

@@ -105,9 +105,7 @@ export default {
     async save(params) {
       try {
         this.$store.commit("SET_APPLICATION_LOADING", true);
-        await this.$axios.put(
-          `/account/me?${qs.stringify(params)}&token=${this.auth.access_token}`
-        );
+        await this.$axios.put(`/account/me?${qs.stringify(params)}`);
         this.$store.commit("SET_APPLICATION_LOADING", false);
         this.snackbar = true;
       } catch (e) {

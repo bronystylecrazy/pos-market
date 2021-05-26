@@ -139,9 +139,10 @@ export default {
       this.isLoading = true;
 
       this.$axios
-        .get(`/product/?token=${this.auth.access_token}`)
+        .get(`/product/`)
         .then(({ data }) => {
-          console.log(data);
+          if (this.$store.state.application.setting.console_log)
+            console.log(data);
           this.items = data.response;
         })
         .finally(() => (this.isLoading = false));

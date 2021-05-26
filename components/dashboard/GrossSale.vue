@@ -57,11 +57,11 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col md="4" sm="12" class="px-8"
-        ><v-btn block tile color="primary" @click="printReport"
-          ><v-icon left>mdi-printer</v-icon>Print Report</v-btn
-        ></v-col
-      >
+      <v-col md="4" sm="12" class="px-8">
+        <v-btn block tile color="primary" @click="$router.push('/orders')"
+          ><v-icon left>mdi-printer</v-icon>See orders</v-btn
+        >
+      </v-col>
     </v-row>
   </v-card>
 </template>

@@ -6,7 +6,7 @@
 import { mapFields } from "vuex-map-fields";
 
 export default {
-  middleware: ["auth"],
+  middleware: ["auth", "admin", "superadmin"],
   transition: "slide-bottom",
   components: {
     PTable: () => import("~/components/customer/PTable"),
@@ -21,10 +21,8 @@ export default {
     this.header = "Manage Customer";
     this.application.appbar = true;
     this.application.loading = true;
-    setTimeout(async () => {
-      await this.$store.dispatch("fetch");
-      this.application.loading = false;
-    }, 1000);
+    await this.$store.dispatch("fetch");
+    this.application.loading = false;
   },
 };
 </script>

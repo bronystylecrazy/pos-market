@@ -182,7 +182,8 @@ export default {
         const file = this.editedItem.file;
         const myData = new FormData();
         myData.append("file", file);
-        console.log(myData);
+        if (this.$store.state.application.setting.console_log)
+          console.log(myData);
 
         const { data } = await this.$axios({
           method: "post",
@@ -202,8 +203,8 @@ export default {
           description: this.editedItem.description,
           stock: this.editedItem.stock,
         };
-
-        console.log("request params", params);
+        if (this.$store.state.application.setting.console_log)
+          console.log("request params", params);
 
         this.$store.dispatch("insertProduct", params).then((data) => {
           this.$swal.fire({

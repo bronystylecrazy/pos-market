@@ -240,13 +240,15 @@ export default {
       }, 500);
     },
     reverse(customers) {
-      console.log("custoners", customers);
+      if (this.$store.state.application.setting.console_log)
+        console.log("custoners", customers);
       var clone = customers.map((c) => c);
       clone.reverse();
       return clone;
     },
     removeFromCart(item) {
-      console.log(item.id);
+      if (this.$store.state.application.setting.console_log)
+        console.log(item.id);
       var deletedItems = [
         ...this.checkout.carts.filter((p) => p.id !== item.id),
       ];
@@ -315,9 +317,7 @@ export default {
         timer: 2000,
       }).then(() => this.$router.push(`/checkout?trans_id=${transactionID}`));
 
-      this.$axios.post(
-        `/event/transaction-complete?token=${this.auth.access_token}`
-      );
+      this.$axios.post(`/event/transaction-complete/`);
       this.stompClient.send(
         "/app/transaction-next",
         JSON.stringify({

@@ -6,7 +6,7 @@
 import { mapFields } from "vuex-map-fields";
 
 export default {
-  middleware: ["auth"],
+  middleware: ["auth", "superadmin"],
   transition: "slide-bottom",
   components: {
     PTable: () => import("~/components/member/PTable"),

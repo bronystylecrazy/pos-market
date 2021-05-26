@@ -134,9 +134,7 @@ export default {
   methods: {
     async save(params) {
       try {
-        await this.$axios.put(
-          `/account/me?${qs.stringify(params)}&token=${this.auth.access_token}`
-        );
+        await this.$axios.put(`/account/me?${qs.stringify(params)}`);
         this.snackbar = true;
       } catch (e) {
         this.$swal("Internal Server Error", e.message, "error");

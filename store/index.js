@@ -18,7 +18,13 @@ const ls = new SecureLS({
 
 const vuexPersistent = createPersistedState({
   key: "fakestore",
-  paths: ["auth", "application.setting", "realtime.badges"],
+  paths: ["auth", "application.setting", "realtime.badges", "members",
+    "roles",
+    "products",
+    "customers",
+    "categories",
+    "orders",
+  ],
   fetchBeforeUse: true,
   storage: {
     getItem: (key) => ls.get(key),
@@ -38,6 +44,7 @@ const createStore = () => new Vuex.Store({
     products: [],
     customers: [],
     categories: [],
+    orders: [],
     dashboard: {
       overview: {
         productInStock: 0,
@@ -74,7 +81,8 @@ const createStore = () => new Vuex.Store({
         realtime_notify: true,
         console_log: true
       },
-      appbar: true
+      appbar: true,
+      api: false
     },
     realtime: {
       socket: null,
@@ -83,6 +91,7 @@ const createStore = () => new Vuex.Store({
         "/customer": 0,
         "/member": 0,
         "/product": 0,
+        "/orders": 0
       },
       online: {}
     }
@@ -124,6 +133,9 @@ const createStore = () => new Vuex.Store({
     },
     SET_CUSTOMERS(state, customers) {
       state.customers = customers;
+    },
+    SET_ORDERS(state, orders) {
+      state.orders = orders;
     },
     SET_ROLES(state, roles) {
       state.roles = roles;
@@ -175,11 +187,14 @@ const createStore = () => new Vuex.Store({
       commit("SET_ONLINE", data.response || {});
       return data;
     },
-    async deleteAccount(app, uid) {
-      console.log("deleteAccount", uid)
+    async deleteAccount({
+      state
+    }, uid) {
+      if (state.application.setting.console_log)
+        console.log("deleteAccount", uid)
       const {
         data
-      } = await this.$axios.delete(`/account/${uid}`);
+      } = await this.$axios.delete(`/account/${uid}?token=${state.auth.access_token}`);
       return data;
     },
     async fetchOverview({
@@ -194,18 +209,31 @@ const createStore = () => new Vuex.Store({
       });
       const {
         data
-      } = await this.$axios.get(`/transaction/overview?token=${state.auth.access_token}`);
+      } = await this.$axios.get(`/transaction/overview`);
       commit("SET_DASHBOARD_OVERVIEW", data.response);
-      console.log("fetchOverview", data);
+      if (state.application.setting.console_log)
+        console.log("fetchOverview", data);
+      return data;
+    },
+    async fetchHistory({
+      state,
+      commit
+    }) {
+      const {
+        data
+      } = await this.$axios.get(`/customer-history/?token=${state.auth.access_token}`);
+      commit("SET_ORDERS", data.response);
       return data;
     },
     async fetchProduct({
-      commit
+      commit,
+      state
     }, params) {
       const {
         data
       } = await this.$axios.get(`/product/${params || ""}`);
-      console.log("fetchProduct", data);
+      if (state.application.setting.console_log)
+        console.log("fetchProduct", data);
       commit("SET_PRODUCTS", data.response);
       return data;
     },
@@ -216,7 +244,7 @@ const createStore = () => new Vuex.Store({
       try {
         const {
           data
-        } = await this.$axios.get(`/account/me?token=${state.auth.access_token || ""}`);
+        } = await this.$axios.get(`/account/me?token=${state.auth.access_token}`);
 
         if (data.error) {
 
@@ -227,8 +255,8 @@ const createStore = () => new Vuex.Store({
           console.error("Error loading profile!");
           return null;
         }
-
-        console.log("fetchProfile", data);
+        if (state.application.setting.console_log)
+          console.log("fetchProfile", data);
 
         commit("SET_AUTH_USER", data.response);
 
@@ -247,8 +275,9 @@ const createStore = () => new Vuex.Store({
     }) {
       const {
         data
-      } = await this.$axios.get(`/customer/?token=${state.auth.access_token || ""}`);
-      console.log("fetchCustomer", data);
+      } = await this.$axios.get(`/customer/?token=${state.auth.access_token}`);
+      if (state.application.setting.console_log)
+        console.log("fetchCustomer", data);
       commit("SET_CUSTOMERS", data.response);
       return data;
     },
@@ -258,8 +287,9 @@ const createStore = () => new Vuex.Store({
     }) {
       const {
         data
-      } = await this.$axios.get(`/account/?token=${state.auth.access_token || ""}`);
-      console.log("fetchMember", data);
+      } = await this.$axios.get(`/account/?token=${state.auth.access_token}`);
+      if (state.application.setting.console_log)
+        console.log("fetchMember", data);
       commit("SET_MEMBERS", data.response);
       return data;
     },
@@ -271,7 +301,8 @@ const createStore = () => new Vuex.Store({
         data
       } = await this.$axios.get(`/role/`);
       commit("SET_ROLES", data.response);
-      console.log("fetchRole", data)
+      if (state.application.setting.console_log)
+        console.log("fetchRole", data)
       return data;
     },
     async fetchCategory({
@@ -280,14 +311,16 @@ const createStore = () => new Vuex.Store({
     }) {
       const {
         data
-      } = await this.$axios.get(`/category/?token=${state.auth.access_token || ""}`);
+      } = await this.$axios.get(`/category/?token=${state.auth.access_token}`);
       commit("SET_CATEGORIES", data.response);
-      console.log("fetchCategory", data)
+      if (state.application.setting.console_log)
+        console.log("fetchCategory", data)
       return data;
     },
     async fetch({
       dispatch,
-      commit
+      commit,
+      state
     }) {
       await Promise.all([
         dispatch("fetchProfile"),
@@ -299,7 +332,8 @@ const createStore = () => new Vuex.Store({
         dispatch("fetchOnline"),
         dispatch("fetchOverview")
       ]);
-      console.log("Done fetching all.");
+      if (state.application.setting.console_log)
+        console.log("Done fetching all.");
     },
     async deleteCustomer({
       state,
@@ -308,7 +342,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.delete(`/customer/${id}?token=${state.auth.access_token}`);
-      console.log("deleteCustomer", data);
+      if (state.application.setting.console_log)
+        console.log("deleteCustomer", data);
       return data;
     },
 
@@ -332,7 +367,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.post(`http://localhost:8080/${repository}/${id}?token=${state.auth.access_token}`);
-      console.log(`delete${repository}`, data);
+      if (state.application.setting.console_log)
+        console.log(`delete${repository}`, data);
       return data;
     },
     async insertMember({
@@ -341,7 +377,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.post(`/customer/?${qs.stringify(params)}&token=${state.auth.access_token}`);
-      console.log(`insertCustomer`, data);
+      if (state.application.setting.console_log)
+        console.log(`insertCustomer`, data);
     },
     async insertCustomer({
       state
@@ -349,7 +386,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.post(`/customer/?${qs.stringify(params)}&token=${state.auth.access_token}`);
-      console.log("insertCustomer", data);
+      if (state.application.setting.console_log)
+        console.log("insertCustomer", data);
       return data;
     },
     async insertProduct({
@@ -358,7 +396,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.post(`/product/?${qs.stringify(params)}&token=${state.auth.access_token}`);
-      console.log(`insertProduct`, data);
+      if (state.application.setting.console_log)
+        console.log(`insertProduct`, data);
       return data;
     },
     async updateProduct({
@@ -370,8 +409,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.put(`/product/${id}?${qs.stringify(params)}&token=${state.auth.access_token}`);
-
-      console.log(`updateProduct`, data);
+      if (state.application.setting.console_log)
+        console.log(`updateProduct`, data);
       return data;
     },
     async updateCustomer({
@@ -383,8 +422,8 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.put(`/customer/${id}?${qs.stringify(params)}&token=${state.auth.access_token}`);
-
-      console.log(`updateCustomer`, data);
+      if (state.application.setting.console_log)
+        console.log(`updateCustomer`, data);
       return data;
     },
     async updateAccount({
@@ -396,15 +435,16 @@ const createStore = () => new Vuex.Store({
       const {
         data
       } = await this.$axios.put(`/account/${id}?${qs.stringify(params)}&token=${state.auth.access_token}`);
-
-      console.log(`updateAccount`, data);
+      if (state.application.setting.console_log)
+        console.log(`updateAccount`, data);
       return data;
     },
     async upload(state, payload) {
       const {
         data
       } = await this.$axios.post(`/upload&token=${state.auth.access_token}`);
-      console.log(`uploadComplete`, data);
+      if (state.application.setting.console_log)
+        console.log(`uploadComplete`, data);
     }
   }
 });

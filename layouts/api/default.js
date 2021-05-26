@@ -26,16 +26,20 @@ export default {
 
       this.stompClient.connect({},
         (frame) => {
-          console.log(frame);
+          if (this.$store.state.application.setting.console_log)
+            console.log(frame);
           this.application.websocket = true;
           this.messages.customerMessage = this.stompClient.subscribe(
             "/topic/customer",
             async (tick) => {
-              console.log(tick);
+              if (this.$store.state.application.setting.console_log)
+                console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
-              await this.$store.dispatch("fetchCustomer", this.$store.dispatch("fetchOverview"));
+              await Promise.all([this.$store.dispatch("fetchCustomer"), this.$store.dispatch("fetchOverview")]);
+
               this.application.loading = false;
+              if (!this.$store.state.application.setting.realtime_notify) return;
               this.badges["/customer"] = (this.badges["/customer"] || 0) + 1;
               this.$toast("Customer updated!", {
                 timeout: 3500,
@@ -47,11 +51,13 @@ export default {
           this.messages.memberMessage = this.stompClient.subscribe(
             "/topic/member",
             async (tick) => {
-              console.log(tick);
+              if (this.$store.state.application.setting.console_log)
+                console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchMember"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
+              if (!this.$store.state.application.setting.realtime_notify) return;
               this.badges["/member"] = (this.badges["/member"] || 0) + 1;
               this.$toast("Member updated!", {
                 timeout: 3500,
@@ -63,11 +69,13 @@ export default {
           this.messages.productMessage = this.stompClient.subscribe(
             "/topic/product",
             async (tick) => {
-              console.log(tick);
+              if (this.$store.state.application.setting.console_log)
+                console.log(tick);
               const messageObject = JSON.parse(tick.body);
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchProduct"), this.$store.dispatch("fetchOverview")]);
               this.application.loading = false;
+              if (!this.$store.state.application.setting.realtime_notify) return;
               this.badges["/product"] = (this.badges["/product"] || 0) + 1;
               this.$toast("Product updated!", {
                 timeout: 3500,
@@ -79,12 +87,14 @@ export default {
           this.messages.memberMessage = this.stompClient.subscribe(
             "/topic/profile",
             async (tick) => {
-              console.log(tick);
+              if (this.$store.state.application.setting.console_log)
+                console.log(tick);
               const messageObject = JSON.parse(tick.body);
               if (messageObject.content.trim() !== this.auth.user.memid) return;
               this.application.loading = true;
               await Promise.all([this.$store.dispatch("fetchProfile")]);
               this.application.loading = false;
+              if (!this.$store.state.application.setting.realtime_notify) return;
               this.badges["/profile"] = (this.badges["/profile"] || 0) + 1;
               this.$toast("Profile updated!", {
                 timeout: 3500,
@@ -96,16 +106,24 @@ export default {
           this.stompClient.subscribe("/topic/monitor", (tick) => {
             const decodedPayload = this.fromBinary(JSON.parse(tick.body).payload);
             const carts = JSON.parse(decodedPayload);
-            console.log(carts)
+            if (this.$store.state.application.setting.console_log)
+              console.log(carts)
             this.checkout.monitorCarts = carts;
           });
 
           this.stompClient.subscribe("/topic/authstate", (tick) => {
             this.$store.dispatch('fetchOnline');
           });
+
+          this.stompClient.subscribe("/topic/transaction-next", (tick) => {
+            this.$store.dispatch("fetchHistory");
+            if (!this.$store.state.application.setting.realtime_notify) return;
+            this.badges["/orders"] = (this.badges["/orders"] || 0) + 1;
+          });
         },
         (error) => {
-          console.log(error);
+          if (this.$store.state.application.setting.console_log)
+            console.log(error);
           setTimeout(() => this.connect(), 1000);
           for (var m of this.messages) this.messages[m].unsubscribe();
           this.application.websocket = false;

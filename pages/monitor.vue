@@ -42,7 +42,8 @@ export default {
       const decodedPayload = this.fromBinary(this.$route.query.payload);
       try {
         const carts = JSON.parse(decodedPayload);
-        console.log(carts);
+        if (this.$store.state.application.setting.console_log)
+          console.log(carts);
         this.checkout.monitorCarts = carts;
       } catch (e) {
         this.$swal({
@@ -80,7 +81,8 @@ export default {
       this.stompClient.connect(
         {},
         (frame) => {
-          console.log(frame);
+          if (this.$store.state.application.setting.console_log)
+            console.log(frame);
           this.application.websocket = true;
 
           this.stompClient.subscribe("/topic/monitor", (tick) => {
@@ -92,7 +94,8 @@ export default {
               JSON.parse(tick.body).payload
             );
             const carts = JSON.parse(decodedPayload);
-            console.log(carts);
+            if (this.$store.state.application.setting.console_log)
+              console.log(carts);
             this.$router.push(
               `/monitor?${qs.stringify({
                 trans_id: this.$route.query.trans_id,
@@ -104,7 +107,8 @@ export default {
 
           this.stompClient.subscribe("/topic/transaction-next", (tick) => {
             const { transactionID, from } = JSON.parse(tick.body);
-            console.log(tick.body);
+            if (this.$store.state.application.setting.console_log)
+              console.log(tick.body);
             if (from !== (this.$route.query.trans_id || "Unknown")) return;
             this.$swal({
               title: "Purchase succeed!",
@@ -118,7 +122,8 @@ export default {
           });
         },
         (error) => {
-          console.log(error);
+          if (this.$store.state.application.setting.console_log)
+            console.log(error);
           setTimeout(() => this.connect(), 1000);
           for (var m of this.messages) this.messages[m].unsubscribe();
           this.application.websocket = false;

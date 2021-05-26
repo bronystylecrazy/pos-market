@@ -285,7 +285,8 @@ export default {
             description: this.editedItem.description,
             stock: this.editedItem.stock,
           };
-          console.log("request params", params);
+          if (this.$store.state.application.setting.console_log)
+            console.log("request params", params);
           this.$store
             .dispatch("updateProduct", { params, id: item.id })
             .then((data) => {
@@ -305,8 +306,8 @@ export default {
             description: this.editedItem.description,
             stock: this.editedItem.stock,
           };
-
-          console.log("request params", params);
+          if (this.$store.state.application.setting.console_log)
+            console.log("request params", params);
           this.$store
             .dispatch("updateProduct", { params, id: item.id })
             .then((data) => {

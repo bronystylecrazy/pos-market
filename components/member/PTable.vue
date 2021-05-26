@@ -21,7 +21,7 @@
     </template>
     <template #item.name="{ item }">
       <v-chip label pill style="width: 100%">
-        <v-avatar left size="24">
+        <v-avatar left size="24" style="transform: scale(0.8)">
           <v-img :src="item.image"> </v-img>
         </v-avatar>
         <b>{{ item.first_name }} {{ item.last_name }}</b>
@@ -281,7 +281,7 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
+      <!-- <v-icon
         x-small
         fab
         class="mr-2"
@@ -289,7 +289,7 @@
         :disabled="application.loading"
       >
         mdi-pencil
-      </v-icon>
+      </v-icon> -->
       <v-icon
         fab
         x-small
@@ -407,7 +407,8 @@ export default {
       var currentPriority =
         this.roles.find((r) => r.name.trim() === this.auth.user.roles.trim())
           ?.priority || 0;
-      console.log(currentPriority);
+      if (this.$store.state.application.setting.console_log)
+        console.log(currentPriority);
       return this.roles
         .filter((r) => r.priority <= currentPriority)
         .map((r) => r.name.trim());
@@ -470,7 +471,8 @@ export default {
       this.editedItem = this.defaultItem;
     },
     async deleteItem(item) {
-      console.log("deleting", item);
+      if (this.$store.state.application.setting.console_log)
+        console.log("deleting", item);
       this.$swal
         .fire({
           icon: "question",
@@ -500,7 +502,8 @@ export default {
     },
     async deleteSelected() {
       const selected = [...this.selected];
-      console.log("deletingMultiple", selected);
+      if (this.$store.state.application.setting.console_log)
+        console.log("deletingMultiple", selected);
       this.selected = [];
       this.$swal
         .fire({

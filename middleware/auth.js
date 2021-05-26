@@ -13,7 +13,8 @@ export default function ({
 
   try {
     store.dispatch("fetchProfile").then(data => {
-      console.log("middleware", data);
+      if (store.state.application.setting.console_log)
+        console.log("middleware", data);
       if (data.error) {
         return redirect(`/login?${qs.stringify({error_message: "Unauthorized, token expired!"})}`);
       }

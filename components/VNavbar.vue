@@ -36,15 +36,15 @@
         v-for="menu in menus"
         :class="`custom-${menu.color}`"
         :key="menu.title + menu.to"
+        @click="badges[menu.to] = 0"
       >
         <v-list-item-icon>
           <template v-if="badges[menu.to] != undefined && badges[menu.to] > 0">
             <v-badge
               color="red"
-              dot
-              offset-x="0"
-              offset-y="0"
-              :content="badges[menu.to].toString()"
+              offset-x="10"
+              offset-y="10"
+              :content="badges[menu.to]"
             >
               <v-icon>{{ menu.icon }}</v-icon>
             </v-badge>
@@ -80,8 +80,12 @@ import { mapFields } from "vuex-map-fields";
 import { schema } from "~/store/models/members";
 export default {
   data() {
-    return {
-      menus: [
+    return {};
+  },
+  computed: {
+    ...mapFields(["auth", "realtime.badges"]),
+    menus() {
+      return [
         {
           title: "Dashboard",
           icon: "mdi-view-dashboard",
@@ -95,34 +99,46 @@ export default {
           color: "green",
         },
         {
-          title: "Manage Product",
-          icon: "mdi-cube",
-          to: "/product",
-          color: "orange",
+          title: "Orders",
+          icon: "mdi-cart",
+          to: "/orders",
+          color: "yellow",
         },
-        {
-          title: "Manage Customer",
-          icon: "mdi-account-group",
-          to: "/customer",
-          color: "gray",
-        },
-        {
-          title: "Manage Member",
-          icon: "mdi-account-supervisor-circle-outline",
-          to: "/member",
-          color: "gray",
-        },
+        ...(this.auth.user.roles.toLowerCase() === "admin" ||
+        this.auth.user.roles.toLowerCase() === "superadmin"
+          ? [
+              {
+                title: "Manage Product",
+                icon: "mdi-cube",
+                to: "/product",
+                color: "orange",
+              },
+              {
+                title: "Manage Customer",
+                icon: "mdi-account-group",
+                to: "/customer",
+                color: "gray",
+              },
+            ]
+          : []),
+        ...(this.auth.user.roles.toLowerCase() === "superadmin"
+          ? [
+              {
+                title: "Manage Member",
+                icon: "mdi-account-supervisor-circle-outline",
+                to: "/member",
+                color: "gray",
+              },
+            ]
+          : []),
         {
           title: "Account setting",
           icon: "mdi-account-cog",
           to: "/me",
           color: "gray",
         },
-      ],
-    };
-  },
-  computed: {
-    ...mapFields(["auth", "realtime.badges"]),
+      ];
+    },
   },
   methods: {
     logout() {
